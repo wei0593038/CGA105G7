@@ -1,0 +1,275 @@
+package com.tripDetail.model;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class TripDetailJDBCDAO implements TripDetailDAO_interface{
+	String driver = "com.mysql.cj.jdbc.Driver";
+	String url = "jdbc:mysql://localhost:3306/test01?serverTimezone=Asia/Taipei";
+	String userid = "root";
+	String passwd = "King297145";
+	
+	private static final String INSERT_STMT = 
+			"INSERT INTO trip_detail (TRIP_ID,LOC_ID,ARRIVAL_TIME,LEAVE_TIME) VALUES (?,?,?,?)";
+	private static final String UPDATE = 
+			"UPDATE trip_detail set TRIP_ID=?, LOC_ID=?, ARRIVAL_TIME=?, LEAVE_TIME=? where TRIP_DETAIL_ID = ?";
+	private static final String DELETE = 
+			"DELETE FROM trip_detail where TRIP_DETAIL_ID = ?";
+	private static final String GET_ONE_STMT = 
+			"SELECT TRIP_DETAIL_ID,TRIP_ID,LOC_ID,ARRIVAL_TIME,LEAVE_TIME FROM trip_detail where TRIP_DETAIL_ID = ?";
+	private static final String GET_ALL_STMT = 
+			"SELECT TRIP_DETAIL_ID,TRIP_ID,LOC_ID,ARRIVAL_TIME,LEAVE_TIME FROM trip_detail order by TRIP_DETAIL_ID";
+	
+	@Override
+	public void insert(TripDetailVO tripDetailVO) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		
+		try {
+			Class.forName(driver);
+			con = DriverManager.getConnection(url,userid,passwd);
+			pstmt = con.prepareStatement(INSERT_STMT);
+			
+			pstmt.setInt(1, tripDetailVO.getTripId());
+			pstmt.setInt(2, tripDetailVO.getLocId());
+			pstmt.setTimestamp(3, tripDetailVO.getArrivalTime());
+			pstmt.setTimestamp(4, tripDetailVO.getLeaveTime());
+			pstmt.executeUpdate();
+			// Handle any driver errors
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Couldn't load database driver. "+ e.getMessage());
+			// Handle any SQL errors
+		}catch (SQLException se) {
+			throw new RuntimeException("A database error occured. "+ se.getMessage());
+			// Clean up JDBC resources
+		}finally {
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+	}
+
+	@Override
+	public void update(TripDetailVO tripDetailVO) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		
+		try {
+			Class.forName(driver);
+			con = DriverManager.getConnection(url,userid,passwd);
+			pstmt = con.prepareStatement(UPDATE);
+			
+			pstmt.setInt(1, tripDetailVO.getTripId());
+			pstmt.setInt(2, tripDetailVO.getLocId());
+			pstmt.setTimestamp(3, tripDetailVO.getArrivalTime());
+			pstmt.setTimestamp(4, tripDetailVO.getLeaveTime());
+			pstmt.setInt(5, tripDetailVO.getTripDatailId());
+			pstmt.executeUpdate();
+			// Handle any driver errors
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Couldn't load database driver. "+ e.getMessage());
+			// Handle any SQL errors
+		}catch (SQLException se) {
+			throw new RuntimeException("A database error occured. "+ se.getMessage());
+			// Clean up JDBC resources
+		}finally {
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+	}
+		
+	@Override
+	public void delete(Integer tripDetailId) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+
+		try {
+
+			Class.forName(driver);
+			con = DriverManager.getConnection(url, userid, passwd);
+			pstmt = con.prepareStatement(DELETE);
+
+			pstmt.setInt(1, tripDetailId);
+
+			pstmt.executeUpdate();
+
+			// Handle any driver errors
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Couldn't load database driver. "
+					+ e.getMessage());
+			// Handle any SQL errors
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. "
+					+ se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+	}
+
+	@Override
+	public TripDetailVO findByPrimaryKey(Integer tripDetailId) {
+		TripDetailVO tripDetailVO =null;
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+
+			Class.forName(driver);
+			con = DriverManager.getConnection(url, userid, passwd);
+			pstmt = con.prepareStatement(GET_ONE_STMT);
+
+			pstmt.setInt(1, tripDetailId);
+
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				tripDetailVO = new TripDetailVO();
+				tripDetailVO.setTripDatailId(rs.getInt("TRIP_DETAIL_ID"));
+				tripDetailVO.setTripId(rs.getInt("TRIP_ID"));
+				tripDetailVO.setLocId(rs.getInt("LOC_ID"));
+				tripDetailVO.setArrivalTime(rs.getTimestamp("ARRIVAL_TIME"));
+				tripDetailVO.setLeaveTime(rs.getTimestamp("LEAVE_TIME"));
+			}
+
+			// Handle any driver errors
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Couldn't load database driver. "+ e.getMessage());
+			// Handle any SQL errors
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. "+ se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+		return tripDetailVO;
+	}
+
+	@Override
+	public List<TripDetailVO> getAll() {
+		List<TripDetailVO> list = new ArrayList<TripDetailVO>();
+		TripDetailVO tripDetailVO =null;
+
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+
+			Class.forName(driver);
+			con = DriverManager.getConnection(url, userid, passwd);
+			pstmt = con.prepareStatement(GET_ALL_STMT);
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				// empVO 也稱為 Domain objects
+				tripDetailVO = new TripDetailVO();
+				tripDetailVO.setTripDatailId(rs.getInt("TRIP_DETAIL_ID"));
+				tripDetailVO.setTripId(rs.getInt("TRIP_ID"));
+				tripDetailVO.setLocId(rs.getInt("LOC_ID"));
+				tripDetailVO.setArrivalTime(rs.getTimestamp("ARRIVAL_TIME"));
+				tripDetailVO.setLeaveTime(rs.getTimestamp("LEAVE_TIME"));
+				
+				list.add(tripDetailVO); // Store the row in the list
+			}
+
+			// Handle any driver errors
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Couldn't load database driver. "
+					+ e.getMessage());
+			// Handle any SQL errors
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. "
+					+ se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+		return list;
+	}
+	
+	
+
+}
