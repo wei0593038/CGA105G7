@@ -7,10 +7,13 @@ bin/
 tmp/
 *.tmp
 *.bak
+/build/
 *.swp
 *~.nib
 local.properties
 /.settings/
+.classpath
+.project
 .loadpath
 .recommenders
 
