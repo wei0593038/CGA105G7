@@ -26,7 +26,7 @@ public class LocationJDBCDAO implements LocationDAO_interface {
 	private static final String UPDATE = "UPDATE location set USER_ID=?, LOC_NAME=?, LONGITUDE=?, LATITUDE=?, LOC_ADDRESS=?,LOC_PHONE=?,LOC_STATUS=? where LOC_ID = ?";
 	private static final String DELETE = "DELETE FROM location where LOC_ID = ?";
 	private static final String GET_ONE_STMT = "SELECT LOC_ID,USER_ID,LOC_NAME,LONGITUDE,LATITUDE,LOC_ADDRESS,LOC_PHONE,LOC_STATUS FROM location where LOC_ID = ?";
-	private static final String GET_ALL_STMT = "SELECT LOC_ID,USER_ID,LOC_NAME,LONGITUDE,LATITUDE,LOC_ADDRESS,LOC_PHONE,LOC_STATUS FROM location order by LOC_ID";
+	private static final String GET_ALL_STMT = "SELECT LOC_ID,USER_ID,LOC_NAME,LONGITUDE,LATITUDE,LOC_ADDRESS,LOC_PHONE,LOC_STATUS FROM location where LOC_STATUS != 2 order by LOC_ID";
 	private static final String SEARCH_ADDRESS ="SELECT LOC_ID,USER_ID,LOC_NAME,LONGITUDE,LATITUDE,LOC_ADDRESS,LOC_PHONE,LOC_STATUS FROM location where LOC_ADDRESS like ?";
 
 	@Override
@@ -321,21 +321,21 @@ public class LocationJDBCDAO implements LocationDAO_interface {
 
 			Class.forName(driver);
 			con = DriverManager.getConnection(url, userid, passwd);
+			//GETALL but not contain status is 2 cuz 2 is only user read
 			pstmt = con.prepareStatement(GET_ALL_STMT);
 			rs = pstmt.executeQuery();
-
 			while (rs.next()) {
-				locationVO = new LocationVO();
-				locationVO.setLocId(rs.getInt("LOC_ID"));
-				locationVO.setUserId(rs.getInt("USER_ID"));
-				locationVO.setLocName(rs.getString("LOC_NAME"));
-				locationVO.setLongitude(rs.getString("LONGITUDE"));
-				locationVO.setLatitude(rs.getString("LATITUDE"));
-				locationVO.setLocAddress(rs.getString("LOC_ADDRESS"));
-				locationVO.setLocPhone(rs.getString("LOC_PHONE"));
-				locationVO.setLocStatus(rs.getInt("LOC_STATUS"));
-
-				list.add(locationVO); // Store the row in the list
+					locationVO = new LocationVO();
+					locationVO.setLocId(rs.getInt("LOC_ID"));
+					locationVO.setUserId(rs.getInt("USER_ID"));
+					locationVO.setLocName(rs.getString("LOC_NAME"));
+					locationVO.setLongitude(rs.getString("LONGITUDE"));
+					locationVO.setLatitude(rs.getString("LATITUDE"));
+					locationVO.setLocAddress(rs.getString("LOC_ADDRESS"));
+					locationVO.setLocPhone(rs.getString("LOC_PHONE"));
+					locationVO.setLocStatus(rs.getInt("LOC_STATUS"));
+					
+					list.add(locationVO); // Store the row in the list					
 			}
 
 			// Handle any driver errors
