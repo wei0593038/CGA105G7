@@ -11,14 +11,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet"
 	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
-<link rel="stylesheet" href="../css/back.css">
+<link rel="stylesheet" href="<%=request.getContextPath() %>/back-end/css/back.css">
 <link
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
 	rel="stylesheet"
 	integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU"
 	crossorigin="anonymous">
-<link rel="stylesheet" href="../css/listAllLoc.css">
-<link rel="website icon" href="../images/logo.png">
+<link rel="stylesheet" href="<%=request.getContextPath() %>/back-end/css/listAllLoc.css">
+<link rel="website icon" href="<%=request.getContextPath() %>/back-end/images/logo.png">
 
 </head>
 
@@ -27,7 +27,7 @@
   <!-- ---------------------aside body區 start--------------------->
   <aside class="aside">
 
-    <img src="../images/logo.png" width="80%">
+    <img src="<%=request.getContextPath() %>/back-end/images/logo.png" width="80%">
 
     <ul class="aside_list">
       <li><a href="#">員工管理</a></li>

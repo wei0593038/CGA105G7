@@ -26,31 +26,37 @@ pageContext.setAttribute("list", list);
 
 		<c:forEach var="locVO" items="${list}">
 			<tr class="align-middle">
-				<td>${locVO.getLocName()}</td>
-				<td>${locVO.getLocAddress()}</td>
-				<td>${locVO.getLocPhone() == null? "查無資料" : locVO.getLocPhone()}</td>
-				<td>${locVO.getLocStatus() == 0? "上架" : "未上架"}</td>
+				<td>${locVO.locName}</td>
+				<td>${locVO.locAddress}</td>
+				<td>${locVO.locPhone == null? "查無資料" : locVO.locPhone}</td>
+				<td>${locVO.locStatus == 0? "上架" : "未上架"}</td>
 				<td>
-					<form method="post" action="">
+<!-- 					<form method="" action=""> -->
 						<input type="hidden" name="action" value="getOne_For_Update">
 						<input type="hidden" name="LOC_ID" value="${locVO.getLocId()}">
 
 
 						<button class="btn btn-primary py-1 px-2" data-bs-toggle="modal"
 							data-bs-target="#updatePic">預覽編輯圖片</button>
-					</form>
+<!-- 					</form> -->
 				</td>
 				<td>
-					<form method="post" action="loc.do">
-						<input type="hidden" name="action" value="getOne_For_Update">
-						<input type="hidden" name="LOC_ID" value="${locVO.getLocId()}">
-						<button class="btn btn-primary py-1 px-2" data-bs-toggle="modal"
-							data-bs-target="#update">編輯</button>
-					</form>
+<!-- 					<form method="post" action="loc.do"> -->
+<!-- 						<input type="hidden" name="action" value="getOne_For_Update"> -->
+<%-- 						<input type="hidden" name="LOC_ID" value="${locVO.getLocId()}"> --%>
+<%-- 						<a href="loc.do?LOC_ID=${locVO.locId}&action=getOne_For_Update" --%>
+<!-- 							class="btn btn-primary py-1 px-2" data-bs-toggle="modal" -->
+<!-- 							data-bs-target="#update">編輯</a> -->
+							<a href="loc.do?LOC_ID=${locVO.locId}&action=getOne_For_Update" class="btn btn-primary py-1 px-2">編輯</a>
+<!-- 					</form> -->
 				</td>
 			</tr>
 		</c:forEach>
 
 	</tbody>
 </table>
-
+	  <!-- 編輯 content start -->
+	  <c:if test="${ openModal != null }">
+      <%@ include file="listOneLoc.jsp" %>
+      <!-- 編輯燈箱 content end -->
+	  </c:if>

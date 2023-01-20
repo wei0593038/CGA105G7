@@ -9,3 +9,16 @@
 .bg-lblue{
   background-color: #041427;	
 }
+
+#dimg{
+  position: absolute;
+  right: 0;
+  bottom:0;
+  width:50px;
+  margin:0;
+  z-index:5;
+}
+
+#table-id tr:nth-child(odd) {
+  background-color: lightblue;
+}

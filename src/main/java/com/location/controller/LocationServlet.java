@@ -17,6 +17,11 @@ import com.location.model.LocationVO;
 @MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 5 * 1024 * 1024, maxRequestSize = 5 * 5 * 1024 * 1024)
 public class LocationServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	
+	public void doGet(HttpServletRequest req, HttpServletResponse res)
+			throws ServletException, IOException {
+		doPost(req, res);
+	}
 
 	public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 
@@ -57,10 +62,13 @@ public class LocationServlet extends HttpServlet {
 			// 開始查詢資料
 			LocationService locSrv = new LocationService();
 			LocationVO locVO = locSrv.getOneLoc(locId);
+			req.setAttribute("locVO", locVO);//資料庫取出的locVO物件，存入req
+			
+			Boolean openModal = true;
+			req.setAttribute("openModal", openModal);
 
 			// 查詢完成準備轉交
-			req.setAttribute("locVO", locVO);
-			String url = "/back-end/Location/editLoc.jsp";
+			String url = "/back-end/Location/locManage.jsp";
 			req.getRequestDispatcher(url).forward(req, res);
 		}
 
