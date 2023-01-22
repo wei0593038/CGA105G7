@@ -72,7 +72,7 @@ public class LocationServlet extends HttpServlet {
 			req.getRequestDispatcher(url).forward(req, res);
 		}
 
-		if ("update".equals(action)) { // 來自update_emp_input.jsp的請求
+		if ("update".equals(action)) { // 來自listOneLoc.jsp的請求
 			
 			/*************************** 1.接收請求參數 **********************/
 			Integer locId = Integer.valueOf(req.getParameter("locId"));
@@ -106,7 +106,7 @@ public class LocationServlet extends HttpServlet {
 		if("search".equals(action)) {
 			String searchWord = "%"+req.getParameter("word")+"%";
 			LocationService locSvc = new LocationService();
-			List<LocationVO> list = locSvc.getForAddress(searchWord);
+			List<LocationVO> list = locSvc.getForLocation(searchWord);
 			
 //			req.setAttribute("list", list);
 			req.getSession().setAttribute("list", list);  

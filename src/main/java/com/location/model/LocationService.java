@@ -48,7 +48,7 @@ public class LocationService {
 		return locVO;
 	}
 	
-	public List<LocationVO> getForAddress(String Address){
-		return dao.getForAddress(Address);
+	public List<LocationVO> getForLocation(String Address){
+		return dao.getGroup(Address);
 	}
 }

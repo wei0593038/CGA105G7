@@ -2,20 +2,20 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 	
-	<%LocationVO locVO = (LocationVO)request.getAttribute("locVO"); %>
+<%LocationVO locVO = (LocationVO)request.getAttribute("locVO"); %>
 	
 	
     
     <div class="modal fade" id="update">
         <div class="modal-dialog">
 
-          <form action="" class="modal-content" method="post">
+          <form action="loc.do" class="modal-content" method="post">
             <div class="modal-header">
               <h5 class="modal-title fw-bold" id="updateLoc">編輯景點</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            
             <div class="modal-body">
-
               <div class="container">
                 <div class="row m-2">
                   <div class="col text-end p-0">
@@ -81,20 +81,24 @@
                   <div class="col text-center p-0">
                     <div>景點狀態 : </div>
                   </div>
-                  <div class="col-3 text-start">
-                    <input type="radio" name="state" id="puton" value="上架" checked>
-                    <label for="puton">上架</label>
+                  <div class="col-3 text-start">							
+                   <input type="radio" name="state" id="puton" value="0" ${locVO.locStatus == 0? "checked" : ""} > 
+                   <label for="puton">上架</label>		
                   </div>
                   <div class="col text-start">
-                    <input type="radio" name="state" id="putoff" value="下架">
-                    <label for="putoff">下架</label>
+                    <input type="radio" name="state" id="putoff" value="1"${locVO.locStatus == 1? "checked" : ""} > 
+                    <label for="putoff">下架</label>	
                   </div>
                 </div>
               </div>
 
             </div>
-            <input type="hidden" name="action" value="update">
             <div class="modal-footer">
+            
+            <input type="hidden" name="action" value="update">
+            <input type="hidden" name="locId" value="${locVO.locId}">
+			<input type="hidden" name="userId" value="${locVO.userId}">
+			
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
               <button type="submit" class="btn btn-primary" id="updateSend" disabled>送出</button>
             </div>

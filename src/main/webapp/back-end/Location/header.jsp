@@ -20,6 +20,7 @@
 <link rel="stylesheet" href="<%=request.getContextPath() %>/back-end/css/listAllLoc.css">
 <link rel="website icon" href="<%=request.getContextPath() %>/back-end/images/logo.png">
 
+
 </head>
 
 <body>

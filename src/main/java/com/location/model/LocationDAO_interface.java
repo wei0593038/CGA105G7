@@ -12,5 +12,5 @@ public interface LocationDAO_interface {
 	public void delete(Integer locId);
 	public LocationVO findByPrimaryKey(Integer locId);
 	public List<LocationVO> getAll();
-	public List<LocationVO> getForAddress(String Address);
+	public List<LocationVO> getGroup(String Address);
 }

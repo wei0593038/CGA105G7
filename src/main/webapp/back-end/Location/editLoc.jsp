@@ -120,8 +120,6 @@
 			</div>
 
 
-			<input type="hidden" name="action" value="update">
-
 			<div class="row">
 				<div class="col">
 				<input type="hidden" name="action" value="update">

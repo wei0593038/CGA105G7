@@ -26,8 +26,8 @@ public class LocationJDBCDAO implements LocationDAO_interface {
 	private static final String UPDATE = "UPDATE location set USER_ID=?, LOC_NAME=?, LONGITUDE=?, LATITUDE=?, LOC_ADDRESS=?,LOC_PHONE=?,LOC_STATUS=? where LOC_ID = ?";
 	private static final String DELETE = "DELETE FROM location where LOC_ID = ?";
 	private static final String GET_ONE_STMT = "SELECT LOC_ID,USER_ID,LOC_NAME,LONGITUDE,LATITUDE,LOC_ADDRESS,LOC_PHONE,LOC_STATUS FROM location where LOC_ID = ?";
-	private static final String GET_ALL_STMT = "SELECT LOC_ID,USER_ID,LOC_NAME,LONGITUDE,LATITUDE,LOC_ADDRESS,LOC_PHONE,LOC_STATUS FROM location where LOC_STATUS != 2 order by LOC_ID";
-	private static final String SEARCH_ADDRESS ="SELECT LOC_ID,USER_ID,LOC_NAME,LONGITUDE,LATITUDE,LOC_ADDRESS,LOC_PHONE,LOC_STATUS FROM location where LOC_ADDRESS like ?";
+	private static final String GET_ALL_STMT = "SELECT LOC_ID,USER_ID,LOC_NAME,LONGITUDE,LATITUDE,LOC_ADDRESS,LOC_PHONE,LOC_STATUS FROM location where LOC_STATUS != 2 order by LOC_ID desc";
+	private static final String GET_GROUP ="SELECT LOC_ID,USER_ID,LOC_NAME,LONGITUDE,LATITUDE,LOC_ADDRESS,LOC_PHONE,LOC_STATUS FROM location WHERE concat(LOC_NAME,LOC_ADDRESS,LOC_PHONE) like ?";
 
 	@Override
 	public void insert(LocationVO locationVO) {
@@ -372,7 +372,7 @@ public class LocationJDBCDAO implements LocationDAO_interface {
 	}
 	
 	@Override
-	public List<LocationVO> getForAddress(String Address){
+	public List<LocationVO> getGroup(String Address){
 		List<LocationVO> list = new ArrayList<LocationVO>();
 		LocationVO locationVO = null;
 
@@ -384,7 +384,7 @@ public class LocationJDBCDAO implements LocationDAO_interface {
 
 			Class.forName(driver);
 			con = DriverManager.getConnection(url, userid, passwd);
-			pstmt = con.prepareStatement(SEARCH_ADDRESS);
+			pstmt = con.prepareStatement(GET_GROUP);
 			pstmt.setString(1, Address);
 			rs = pstmt.executeQuery();
 

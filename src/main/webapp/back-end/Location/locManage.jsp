@@ -1,7 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-
-<%@ include file="./header.jsp"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>	
+<%@ page import="java.util.*" %>
+<%@ include file="header.jsp"%>
 <title>7Tour | 景點管理</title>
 <!-- ---------------------main body區 start--------------------->
 <div class="workplace mt-2">
@@ -15,10 +16,9 @@
 
 			<div class="col p-0  text-end">
 				<button type="button" class="btn btn-primary py-1 px-2 mx-3"
-					data-bs-toggle="modal" data-bs-target="#add">新增景點</button>
+					data-bs-toggle="modal" data-bs-target="#add">+新增景點</button>
 				<form action="loc.do" method="post" class="d-inline">
-					<label for="searchLoc">關鍵字搜尋 : </label> <input type="text"
-						placeholder="請輸入" id="searchLoc" name="word">
+					<input type="text" placeholder="Search..." id="searchLoc" name="word">
 					<button class="btn btn-primary py-1 px-2" type="submit">
 						<i class="bi bi-search"></i>
 					</button>
@@ -26,10 +26,9 @@
 				</form>
 			</div>
 		</div>
-
 		<div class="row">
 
-			<%@ include file="./getAllLoc.jsp"%>
+		<%@ include file="getAllLoc.jsp"%>
 
 		</div>
 
@@ -108,7 +107,6 @@
 			</div>
 		</div>
 		<!-- 新增 content end -->
-
 	</div>
 </div>
 <!-- ---------------------main body區 end--------------------->
