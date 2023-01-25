@@ -4,7 +4,6 @@
 	<%@page import="com.location.model.LocationVO"%>
 	<%@ page import="java.util.List"%>
 
-<c:set var="list" value="${req.getParameter('list')}" scope="page"/>
 	<%@ include file="./header.jsp"%>
 	<title>7Tour | 景點管理</title>
 	<!-- ---------------------main body區 start--------------------->
@@ -32,8 +31,8 @@
       </div>
 
 			<div class="row">
-
-				<table class="table">
+			
+	<table class="table">
 	<thead>
 		<tr>
 			<th scope="col">景點名稱</th>

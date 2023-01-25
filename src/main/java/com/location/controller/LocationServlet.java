@@ -104,14 +104,17 @@ public class LocationServlet extends HttpServlet {
 		}
 		
 		if("search".equals(action)) {
-			String searchWord = "%"+req.getParameter("word")+"%";
+			String searchWord =req.getParameter("word");
 			LocationService locSvc = new LocationService();
 			List<LocationVO> list = locSvc.getForLocation(searchWord);
-			
-//			req.setAttribute("list", list);
-			req.getSession().setAttribute("list", list);  
-			String url = "/back-end/Location/search.jsp";
+
+			req.setAttribute("searchWord", searchWord);
+			req.setAttribute("search", "search");
+			req.setAttribute("list", list); 
+
+			String url = "/back-end/Location/locManage.jsp";
 			req.getRequestDispatcher(url).forward(req, res);
+			
 		}
 
 	}

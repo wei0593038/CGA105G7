@@ -385,7 +385,7 @@ public class LocationJDBCDAO implements LocationDAO_interface {
 			Class.forName(driver);
 			con = DriverManager.getConnection(url, userid, passwd);
 			pstmt = con.prepareStatement(GET_GROUP);
-			pstmt.setString(1, Address);
+			pstmt.setString(1, "%"+Address+"%");
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {
