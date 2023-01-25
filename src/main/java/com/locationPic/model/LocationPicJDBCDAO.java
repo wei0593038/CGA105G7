@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LocationPicJDBCDAO implements LocationPicDAO_interface{
 	String driver = "com.mysql.cj.jdbc.Driver";
@@ -18,6 +20,7 @@ public class LocationPicJDBCDAO implements LocationPicDAO_interface{
 			"DELETE FROM location_pic where LOC_PIC_ID = ?";
 	private static final String GET_GROUP_STMT = 
 			"SELECT LOC_PIC_ID,LOC_ID,LOC_PIC FROM location_pic where LOC_ID = ?";
+	
 	@Override
 	public void insert(LocationPicVO locationPicVO) {
 		Connection con = null;
@@ -78,7 +81,6 @@ public class LocationPicJDBCDAO implements LocationPicDAO_interface{
 		}
 		
 	}
-
 	
 	@Override
 	public void delete(Integer locPicId) {
@@ -124,7 +126,8 @@ public class LocationPicJDBCDAO implements LocationPicDAO_interface{
 	}
 
 	@Override
-	public LocationPicVO findByForeignKey(Integer locId) {
+	public List<LocationPicVO> findByForeignKey(Integer locId) {
+		List<LocationPicVO> list = new ArrayList<LocationPicVO>();
 		LocationPicVO locationPicVO = null;
 		Connection con = null;
 		PreparedStatement pstmt = null;
@@ -135,7 +138,6 @@ public class LocationPicJDBCDAO implements LocationPicDAO_interface{
 			Class.forName(driver);
 			con = DriverManager.getConnection(url, userid, passwd);
 			pstmt = con.prepareStatement(GET_GROUP_STMT);
-
 			pstmt.setInt(1, locId);
 
 			rs = pstmt.executeQuery();
@@ -145,6 +147,7 @@ public class LocationPicJDBCDAO implements LocationPicDAO_interface{
 				locationPicVO.setLocPicId(rs.getInt("LOC_PIC_ID"));
 				locationPicVO.setLocId(rs.getInt("LOC_ID"));
 				locationPicVO.setLocPic(rs.getBytes("LOC_PIC"));
+				list.add(locationPicVO);
 			}
 
 			// Handle any driver errors
@@ -177,8 +180,7 @@ public class LocationPicJDBCDAO implements LocationPicDAO_interface{
 				}
 			}
 		}
-		return locationPicVO;
+		return list;
 	}
-
 
 }

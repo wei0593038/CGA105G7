@@ -1,5 +1,7 @@
 package com.locationPic.model;
 
+import java.util.List;
+
 public class LocationPicService {
 	private LocationPicDAO_interface dao ;
 	
@@ -21,7 +23,7 @@ public class LocationPicService {
 		dao.delete(locPicId);
 	}
 	
-	public LocationPicVO getLocPic(Integer locId) {
+	public List<LocationPicVO> getLocPic(Integer locId) {
 		LocationPicVO locPicVO = new LocationPicVO();
 		locPicVO.setLocId(locId);
 		return dao.findByForeignKey(locId);
