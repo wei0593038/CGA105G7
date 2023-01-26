@@ -41,11 +41,8 @@ pageContext.setAttribute("list", list);
 				<td>${locVO.locPhone == null? "查無資料" : locVO.locPhone}</td>
 				<td>${locVO.locStatus == 0? "上架" : "未上架"}</td>
 				<td>
-<!-- 						<input type="hidden" name="action" value="getOne_For_Update"> -->
-<%-- 						<input type="hidden" name="LOC_ID" value="${locVO.getLocId()}"> --%>
-<!-- 						<button class="btn btn-primary py-1 px-2" data-bs-toggle="modal" -->
-<!-- 							data-bs-target="#updatePic">預覽編輯圖片</button> -->
-					<a href="locPic.do?LOC_ID=${locVO.locId}&action=get_For_Update" class="btn btn-primary py-1 px -2">編輯圖片</a>
+
+					<a href="locPic.do?LOC_ID=${locVO.locId}&action=get_For_Update" class="btn btn-primary py-1 px -2">預覽圖片</a>
 				</td>
 				<td>
 					<a href="loc.do?LOC_ID=${locVO.locId}&action=getOne_For_Update" class="btn btn-primary py-1 px-2">編輯</a>

@@ -1,12 +1,18 @@
 package com.locationPic.model;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+
+import javax.servlet.http.Part;
 
 public class LocationPicJDBCDAO implements LocationPicDAO_interface{
 	String driver = "com.mysql.cj.jdbc.Driver";
@@ -22,7 +28,7 @@ public class LocationPicJDBCDAO implements LocationPicDAO_interface{
 			"SELECT LOC_PIC_ID,LOC_ID,LOC_PIC FROM location_pic where LOC_ID = ?";
 	
 	@Override
-	public void insert(LocationPicVO locationPicVO) {
+	public void insert(LocationPicVO locationPicVO,Collection<Part> locPic) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		
@@ -31,9 +37,24 @@ public class LocationPicJDBCDAO implements LocationPicDAO_interface{
 			con = DriverManager.getConnection(url,userid,passwd);
 			pstmt = con.prepareStatement(INSERT_STMT);
 			
-			pstmt.setInt(1, locationPicVO.getLocId());
-			pstmt.setBytes(2, locationPicVO.getLocPic());
-			pstmt.executeUpdate();
+			for(Part pic : locPic) {
+				String filename = pic.getSubmittedFileName();
+				if(filename != null && filename.length() != 0 && pic.getContentType() != null) {
+					try {
+						InputStream ins = pic.getInputStream();
+						byte[] data = new byte[ins.available()];
+						data = ins.readAllBytes();
+						pstmt.setInt(1, locationPicVO.getLocId());
+						pstmt.setBytes(2, data);
+						pstmt.executeUpdate();
+					} catch (IOException e) {
+						System.out.println("圖片輸入錯誤");
+						e.printStackTrace();
+					}
+					
+				}
+			}
+			
 			// Handle any driver errors
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException("Couldn't load database driver. "+ e.getMessage());
@@ -141,7 +162,6 @@ public class LocationPicJDBCDAO implements LocationPicDAO_interface{
 			pstmt.setInt(1, locId);
 
 			rs = pstmt.executeQuery();
-
 			while (rs.next()) {
 				locationPicVO = new LocationPicVO();
 				locationPicVO.setLocPicId(rs.getInt("LOC_PIC_ID"));

@@ -1,6 +1,9 @@
 package com.locationPic.model;
 
+import java.util.Collection;
 import java.util.List;
+
+import javax.servlet.http.Part;
 
 public class LocationPicService {
 	private LocationPicDAO_interface dao ;
@@ -9,12 +12,11 @@ public class LocationPicService {
 		dao = new LocationPicJDBCDAO();
 	}
 	
-	public LocationPicVO addLocPic(Integer LocId, byte[] LocPic) {
+	public LocationPicVO addLocPic(Integer LocId, Collection<Part> locPic) {
 		
 		LocationPicVO locPicVO = new LocationPicVO();
 		locPicVO.setLocId(LocId);
-		locPicVO.setLocPic(LocPic);
-		dao.insert(locPicVO);
+		dao.insert(locPicVO,locPic);
 		
 		return locPicVO;
 	}

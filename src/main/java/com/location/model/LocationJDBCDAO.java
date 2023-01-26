@@ -116,7 +116,6 @@ public class LocationJDBCDAO implements LocationDAO_interface {
 						locPicVO.setLocPic(data);
 						locPicDAO.insertHasPic(locPicVO, con);
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
