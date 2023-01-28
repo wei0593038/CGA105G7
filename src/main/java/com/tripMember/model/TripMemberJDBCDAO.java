@@ -59,7 +59,35 @@ public class TripMemberJDBCDAO implements TripMemberDAO_interface{
 		}
 		
 	}
+	@Override
+	public void jointInsert(TripMemberVO tripMemberVO, Connection con) {
+		PreparedStatement pstmt = null;
+		
+		try {
+			pstmt = con.prepareStatement(INSERT_STMT);
+			
+			pstmt.setInt(1, tripMemberVO.getTripId());
+			pstmt.setInt(2, tripMemberVO.getUserId());
+			pstmt.setBoolean(3, tripMemberVO.getIsMbr());
+			pstmt.executeUpdate();
+			// Handle any driver errors
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. "+ se.getMessage());
+			// Clean up JDBC resources
+		}finally {
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+		}
+		
+	}
 
+	
+	
 	@Override
 	public void update(TripMemberVO tripMemberVO) {
 		Connection con = null;

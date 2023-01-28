@@ -10,26 +10,26 @@ public class TripService {
 		dao = new TripJDBCDAO();
 	}
 	
-	public TripVO addTrip(String tripName, Date startDate, Date endDate, byte[] coverPic, String notes) {
+	public TripVO addTrip(String tripName, Date startDate, Date endDate, byte[] coverPic, String note, Integer userId) {
 		
 		TripVO tripVO = new TripVO();
 		tripVO.setTripName(tripName);
 		tripVO.setStartDate(startDate);
 		tripVO.setEndDate(endDate);
 		tripVO.setCoverPic(coverPic);
-		tripVO.setNotes(notes);
-		dao.insert(tripVO);
+		tripVO.setNote(note);
+		dao.insert(tripVO, userId);
 		return tripVO;
 		
 	}
 	
-	public TripVO updateTrip(String tripName, Date startDate, Date endDate, byte[] coverPic, String notes) {
+	public TripVO updateTrip(String tripName, Date startDate, Date endDate, byte[] coverPic, String note) {
 		TripVO tripVO = new TripVO();
 		tripVO.setTripName(tripName);
 		tripVO.setStartDate(startDate);
 		tripVO.setEndDate(endDate);
 		tripVO.setCoverPic(coverPic);
-		tripVO.setNotes(notes);
+		tripVO.setNote(note);
 		dao.update(tripVO);
 		return tripVO;
 	}
@@ -38,8 +38,8 @@ public class TripService {
 		dao.delete(tripId);
 	}
 	
-	public List<TripVO> getAll(){
-		return dao.getAll();
+	public List<TripVO> getAll(Integer userId){
+		return dao.getAll(userId);
 	}
 	
 	public TripVO getOneTrip(Integer tripId) {

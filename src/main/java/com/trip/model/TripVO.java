@@ -11,7 +11,7 @@ public class TripVO implements Serializable {
 	private Date startDate;
 	private Date endDate;
 	private byte[] coverPic;
-	private String notes;
+	private String note;
 	
 	public Integer getTripId() {
 		return tripId;
@@ -43,10 +43,10 @@ public class TripVO implements Serializable {
 	public void setCoverPic(byte[] coverPic) {
 		this.coverPic = coverPic;
 	}
-	public String getNotes() {
-		return notes;
+	public String getNote() {
+		return note;
 	}
-	public void setNotes(String notes) {
-		this.notes = notes;
+	public void setNote(String note) {
+		this.note = note;
 	}
 }
