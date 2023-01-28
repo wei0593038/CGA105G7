@@ -48,12 +48,14 @@
           <c:forEach var="tripVO" items="${triplist}">
            <c:if test="${!triplist.isEmpty()}">
             <div class="card tripCard d-inline-block m-2" style="width: 18rem;">
-            <c:if test="${tripVO.coverPic != null }">
-              <a href="#"><img src="data:image/png;base64,${Base64.getEncoder().encodeToString(tripVO.coverPic)}" class="card-img-top"></a>
-            </c:if>
-            <c:if test="${tripVO.coverPic == null }">
-            <h3>尚無圖片</h3>
-            </c:if>  
+            <a href="<%=request.getContextPath()%>/front-end/TripPlan/tripPlan.jsp?TRIP_ID=${tripVO.tripId}">
+              <c:if test="${tripVO.coverPic != null }">
+                <img src="data:image/png;base64,${Base64.getEncoder().encodeToString(tripVO.coverPic)}" class="card-img-top">
+              </c:if>
+              <c:if test="${tripVO.coverPic == null }">
+               <h3 class="d-block">尚無圖片</h3>
+              </c:if>  
+            </a>
               <div class="card-body">
                 <h5 class="card-title fw-bold">${tripVO.tripName}</h5>
                 <p class="card-text mb-1">${tripVO.startDate} - ${tripVO.endDate}</p>
