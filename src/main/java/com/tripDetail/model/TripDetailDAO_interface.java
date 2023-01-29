@@ -8,4 +8,5 @@ public interface TripDetailDAO_interface {
 	public void delete(Integer tripDetailId);
 	public TripDetailVO findByPrimaryKey(Integer tripDetailId);
 	public List<TripDetailVO> getAll();
+	public List<TripDetailVO> getAll_ForTRIP(Integer tripId);
 }

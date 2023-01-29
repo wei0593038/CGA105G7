@@ -23,13 +23,14 @@ public class TripService {
 		
 	}
 	
-	public TripVO updateTrip(String tripName, Date startDate, Date endDate, byte[] coverPic, String note) {
+	public TripVO updateTrip(String tripName, Date startDate, Date endDate, byte[] coverPic, String note,Integer tripId) {
 		TripVO tripVO = new TripVO();
 		tripVO.setTripName(tripName);
 		tripVO.setStartDate(startDate);
 		tripVO.setEndDate(endDate);
 		tripVO.setCoverPic(coverPic);
 		tripVO.setNote(note);
+		tripVO.setTripId(tripId);
 		dao.update(tripVO);
 		return tripVO;
 	}

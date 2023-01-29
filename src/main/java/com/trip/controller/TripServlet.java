@@ -27,7 +27,7 @@ public class TripServlet extends HttpServlet{
 		req.setCharacterEncoding("UTF-8");
 		String action = req.getParameter("action");
 		
-		if ("insert".equals(action)) {//來自userTrip.jsp的請求
+		if ("insert".equals(action)) {//來自userTripAll.jsp的請求
 			//1.接收請求參數
 			String tripName = req.getParameter("trip_name");
 			Date startDate = Date.valueOf(req.getParameter("start_date"));
@@ -47,7 +47,7 @@ public class TripServlet extends HttpServlet{
 			req.getRequestDispatcher(url).forward(req, res);
 		}
 		
-		if ("delete".equals(action)) {//來自userTrip.jsp的請求
+		if ("delete".equals(action)) {//來自userTripAll.jsp的請求
 			//1.接收請求參數
 			Integer tripId = Integer.valueOf(req.getParameter("TRIP_ID"));
 			
@@ -60,7 +60,7 @@ public class TripServlet extends HttpServlet{
 			req.getRequestDispatcher(url).forward(req, res);
 		}
 		
-		if ("getPic_For_Update".equals(action)) {
+		if ("getPic_For_Update".equals(action)) {//來自userTripAll.jsp的請求
 			//1.接收請求參數
 			Integer tripId =Integer.valueOf(req.getParameter("TRIP_ID"));
 			
@@ -76,6 +76,28 @@ public class TripServlet extends HttpServlet{
 			
 			//4.完成後準備轉交
 			String url = "/front-end/TripAll/userTripAll.jsp";
+			req.getRequestDispatcher(url).forward(req, res);
+		}
+		
+		if ("updateTripPic".equals(action)) {//來自userTripAll.jsp的請求
+			//1.接收參數
+			Integer tripId = Integer.valueOf(req.getParameter("TRIP_ID"));
+			String tripName = req.getParameter("TRIP_NAME");
+			Date startDate = Date.valueOf(req.getParameter("START_DATE"));
+			Date endDate = Date.valueOf(req.getParameter("END_DATE"));
+			String note = req.getParameter("NOTE");
+			
+			byte[] coverPic = req.getPart("COVER_PIC").getSubmittedFileName().isEmpty()? null : req.getPart("COVER_PIC").getInputStream().readAllBytes();
+			
+			
+			//2.開始更新圖片
+			TripService tripSvc = new TripService();
+			TripVO tripVO = tripSvc.updateTrip(tripName, startDate, endDate, coverPic, note, tripId);
+			
+			req.setAttribute("tripVO", tripVO);
+			
+			//3.完成後準備轉交
+			String url = "/front-end/TripAll/trip.do?TRIP_ID=" + tripId + "&action=getPic_For_Update";
 			req.getRequestDispatcher(url).forward(req, res);
 		}
 		

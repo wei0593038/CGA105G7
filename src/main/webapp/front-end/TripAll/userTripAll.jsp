@@ -154,7 +154,7 @@
           <h5 class="modal-title changeIMGLabel">編輯行程封面</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <form action="" method="post">
+        <form action="trip.do" method="post" enctype="multipart/form-data">
           <div class="modal-body">
           <c:if test="${tripVO.coverPic != null }">
             <img src="data:image/png;base64,${Base64.getEncoder().encodeToString(tripVO.coverPic)}" class="shadow w-100" style="height: 300px;">
@@ -164,9 +164,15 @@
           </c:if>
             <div class="input-group p-3">
               <label class="input-group-text" for="updatePic">更換圖片</label>
-              <input type="file" class="form-control" id="updatePic">
+              <input type="file" class="form-control" id="updatePic" name="COVER_PIC" accept=".jpg,.png,.jpeg">
             </div>
           </div>
+          	<input type="hidden" name="action" value="updateTripPic">
+			<input type="hidden" name="TRIP_ID" value="${tripVO.tripId}">
+			<input type="hidden" name="TRIP_NAME" value="${tripVO.tripName}">
+			<input type="hidden" name="START_DATE" value="${tripVO.startDate}">
+			<input type="hidden" name="END_DATE" value="${tripVO.endDate}">
+			<input type="hidden" name="NOTE" value="${tripVO.note}">
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
             <button type="submit" class="btn btn-primary">送出</button>

@@ -24,6 +24,9 @@ public class TripDetailJDBCDAO implements TripDetailDAO_interface{
 			"SELECT TRIP_DETAIL_ID,TRIP_ID,LOC_ID,ARRIVAL_TIME,LEAVE_TIME FROM trip_detail where TRIP_DETAIL_ID = ?";
 	private static final String GET_ALL_STMT = 
 			"SELECT TRIP_DETAIL_ID,TRIP_ID,LOC_ID,ARRIVAL_TIME,LEAVE_TIME FROM trip_detail order by TRIP_DETAIL_ID";
+	private static final String GET_ALL_FORTRIP = 
+			"SELECT TRIP_DETAIL_ID,TRIP_ID,LOC_ID,ARRIVAL_TIME,LEAVE_TIME FROM trip_detail WHERE TRIP_ID=?";
+
 	
 	@Override
 	public void insert(TripDetailVO tripDetailVO) {
@@ -270,6 +273,69 @@ public class TripDetailJDBCDAO implements TripDetailDAO_interface{
 		return list;
 	}
 	
+	@Override
+	public List<TripDetailVO> getAll_ForTRIP(Integer tripId){
+		List<TripDetailVO> list = new ArrayList<TripDetailVO>();
+		TripDetailVO tripDetailVO =null;
+
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+
+			Class.forName(driver);
+			con = DriverManager.getConnection(url, userid, passwd);
+			pstmt = con.prepareStatement(GET_ALL_FORTRIP);
+			pstmt.setInt(1, tripId);
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				// empVO 也稱為 Domain objects
+				tripDetailVO = new TripDetailVO();
+				tripDetailVO.setTripDatailId(rs.getInt("TRIP_DETAIL_ID"));
+				tripDetailVO.setTripId(rs.getInt("TRIP_ID"));
+				tripDetailVO.setLocId(rs.getInt("LOC_ID"));
+				tripDetailVO.setArrivalTime(rs.getTimestamp("ARRIVAL_TIME"));
+				tripDetailVO.setLeaveTime(rs.getTimestamp("LEAVE_TIME"));
+				
+				list.add(tripDetailVO); // Store the row in the list
+			}
+
+			// Handle any driver errors
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Couldn't load database driver. "
+					+ e.getMessage());
+			// Handle any SQL errors
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. "
+					+ se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+		return list;
+	}
 	
 
 }
