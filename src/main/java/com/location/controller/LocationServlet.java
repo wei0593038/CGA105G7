@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,7 +14,7 @@ import javax.servlet.http.Part;
 import com.location.model.LocationService;
 import com.location.model.LocationVO;
 
-//@WebServlet("/back-end/Location/") 等同到web.xml註冊
+@WebServlet("/front-end/TripPlan/tripLoc.do") //等同到web.xml註冊
 @MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 5 * 1024 * 1024, maxRequestSize = 5 * 5 * 1024 * 1024)
 public class LocationServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -113,6 +114,22 @@ public class LocationServlet extends HttpServlet {
 			req.setAttribute("list", list); 
 
 			String url = "/back-end/Location/locManage.jsp";
+			req.getRequestDispatcher(url).forward(req, res);
+			
+		}
+		
+		if ("getOneLoc".equals(action)) {//來自tripPlan.jsp的請求
+			//1.接收請求參數
+			Integer locId = Integer.valueOf(req.getParameter("LOC_ID"));
+			
+			//2.開始搜尋
+			LocationService locSvc = new LocationService();
+			LocationVO locVO = locSvc.getOneLoc(locId);
+			
+			req.setAttribute("locVO", locVO);
+			
+			//3.搜尋結束開始轉交
+			String url = "/front-end/TripPlan/tripPlan.jsp";
 			req.getRequestDispatcher(url).forward(req, res);
 			
 		}

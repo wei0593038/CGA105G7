@@ -1,5 +1,7 @@
+<%@page import="com.location.model.LocationVO"%>
 <%@page import="com.location.model.LocationService"%>
 <%@page import="com.locationPic.model.LocationPicService"%>
+<%@page import="com.locationPic.model.LocationPicVO"%>
 <%@page import="java.util.List"%>
 <%@page import="com.tripDetail.model.TripDetailService"%>
 <%@page import="com.tripDetail.model.TripDetailVO"%>
@@ -14,6 +16,9 @@
     pageEncoding="UTF-8"%>
 
 <%
+//先接userId UsersVO usersVO = (UsersVO) session.getAttribute("usersVO");
+	Integer userId = 1;//這邊先將userId寫死
+	
 // 	String tripId = request.getParameter("TRIP_ID");
 	Integer tripId = 2;
 	TripService tripSvc = new TripService();
@@ -24,6 +29,15 @@
 	TripDetailService tripDetailSvc = new TripDetailService();
 	List<TripDetailVO> list = tripDetailSvc.getTrip_TripDetail(tripId);
 	pageContext.setAttribute("list", list);
+	
+// get location info
+	LocationVO locVO = (LocationVO)request.getAttribute("locVO");
+//get location Pic
+	if(locVO != null){
+		LocationPicService locPicSvc = new LocationPicService();
+		List<LocationPicVO> locPicList = locPicSvc.getLocPic(locVO.getLocId());
+		pageContext.setAttribute("locPicList", locPicList);		
+		}
 %>
 
   <%@ include file="../headAndFoot/header.jsp" %>
@@ -86,12 +100,12 @@
 
 	<c:forEach var="tripDetail" items="${list}">
         <div class="row">
-          <a href="#loc-info" class="col-12 d-flex align-items-center bg-cblue my-2 custom-loc" data-bs-toggle="collapse">
+          <a href="tripLoc.do?LOC_ID=${tripDetail.locId}&action=getOneLoc" class="btn trip-btn col-12 d-flex align-items-center bg-cblue my-1">
             <div class="col-3">
               <img src="data:image/png;base64,${Base64.getEncoder().encodeToString(LocationPicService().getLocPic(tripDetail.locId).get(0).getLocPic())}" class="w-100">
             </div>
-            <div class="col-8 px-2">
-              <p class="m-1">${SimpleDateFormat("hh:mm").format(tripDetail.arrivalTime)} - ${SimpleDateFormat("hh:mm").format(tripDetail.leaveTime)}</p>
+            <div class="col-8 px-2 text-start">
+              <p class="m-1">${SimpleDateFormat("HH:mm").format(tripDetail.arrivalTime)} - ${SimpleDateFormat("HH:mm").format(tripDetail.leaveTime)}</p>
               <p class="m-1 text-truncate">${LocationService().getOneLoc(tripDetail.locId).getLocName()}</p>
             </div>
           </a>
@@ -162,7 +176,7 @@
               <div class="row">
                 <div class="col m-2">
                   <form action="" method="post">
-                    <textarea name="" id="note-input" placeholder="旅程中，有些東西必定要帶的。可以寫在這邊，來提醒旅遊成員喔~">${tripVO.note}</textarea>
+                    <textarea name="" id="note-input" placeholder="旅程中，有些物品必定要帶的。可以寫在這邊，來提醒旅遊成員喔~">${tripVO.note}</textarea>
                     <button class="btn trip-btn col-12 border-dark">儲存</button>
                   </form>
                 </div>

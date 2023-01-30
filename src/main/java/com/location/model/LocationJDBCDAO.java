@@ -28,6 +28,7 @@ public class LocationJDBCDAO implements LocationDAO_interface {
 	private static final String GET_ONE_STMT = "SELECT LOC_ID,USER_ID,LOC_NAME,LONGITUDE,LATITUDE,LOC_ADDRESS,LOC_PHONE,LOC_STATUS FROM location where LOC_ID = ?";
 	private static final String GET_ALL_STMT = "SELECT LOC_ID,USER_ID,LOC_NAME,LONGITUDE,LATITUDE,LOC_ADDRESS,LOC_PHONE,LOC_STATUS FROM location where LOC_STATUS != 2 order by LOC_ID desc";
 	private static final String GET_GROUP ="SELECT LOC_ID,USER_ID,LOC_NAME,LONGITUDE,LATITUDE,LOC_ADDRESS,LOC_PHONE,LOC_STATUS FROM location WHERE concat(LOC_NAME,LOC_ADDRESS,LOC_PHONE) like ?";
+	private static final String GET_FK_USERID = "SELECT LOC_ID,USER_ID,LOC_NAME,LONGITUDE,LATITUDE,LOC_ADDRESS,LOC_PHONE,LOC_STATUS FROM location WHERE USER_ID=?";
 
 	@Override
 	public void insert(LocationVO locationVO) {
@@ -371,7 +372,7 @@ public class LocationJDBCDAO implements LocationDAO_interface {
 	}
 	
 	@Override
-	public List<LocationVO> getGroup(String Address){
+	public List<LocationVO> getGroup(String address){
 		List<LocationVO> list = new ArrayList<LocationVO>();
 		LocationVO locationVO = null;
 
@@ -384,7 +385,71 @@ public class LocationJDBCDAO implements LocationDAO_interface {
 			Class.forName(driver);
 			con = DriverManager.getConnection(url, userid, passwd);
 			pstmt = con.prepareStatement(GET_GROUP);
-			pstmt.setString(1, "%"+Address+"%");
+			pstmt.setString(1, "%"+address+"%");
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				locationVO = new LocationVO();
+				locationVO.setLocId(rs.getInt("LOC_ID"));
+				locationVO.setUserId(rs.getInt("USER_ID"));
+				locationVO.setLocName(rs.getString("LOC_NAME"));
+				locationVO.setLongitude(rs.getString("LONGITUDE"));
+				locationVO.setLatitude(rs.getString("LATITUDE"));
+				locationVO.setLocAddress(rs.getString("LOC_ADDRESS"));
+				locationVO.setLocPhone(rs.getString("LOC_PHONE"));
+				locationVO.setLocStatus(rs.getInt("LOC_STATUS"));
+
+				list.add(locationVO); // Store the row in the list
+			}
+
+			// Handle any driver errors
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Couldn't load database driver. " + e.getMessage());
+			// Handle any SQL errors
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+		return list;
+	}
+	
+	@Override
+	public List<LocationVO> findByForeignKey(Integer userId){
+		List<LocationVO> list = new ArrayList<LocationVO>();
+		LocationVO locationVO = null;
+
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+
+			Class.forName(driver);
+			con = DriverManager.getConnection(url, userid, passwd);
+			pstmt = con.prepareStatement(GET_FK_USERID);
+			pstmt.setInt(1, userId);
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {

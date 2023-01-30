@@ -82,4 +82,10 @@ $('#invite').click((e) => {
   $('#notes').removeClass('show active');
 });
 
+//close #loc-info
+function closeLocInfo(){
+	$('#loc-info').removeClass('show');
+};
+
+
 

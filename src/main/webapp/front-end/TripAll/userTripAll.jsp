@@ -8,9 +8,12 @@
 
 <!-- 	UsersVO usersVO = (UsersVO) session.getAttribute("usersVO"); -->
 <%
+	Integer userId = 1;//這裡會員資料先寫死
+
 	TripService tripSvc = new TripService();
-	List<TripVO> triplist = tripSvc.getAll(1);
+	List<TripVO> triplist = tripSvc.getAll(userId);
 	pageContext.setAttribute("triplist", triplist);
+	
 	
 %>
 
@@ -134,7 +137,7 @@
             </div>
           </div>
           <input type="hidden" name="action" value="insert">
-		  <input type="hidden" name="userId" value="1"><!-- 這裡會員資料先寫死 -->
+		  <input type="hidden" name="userId" value="${userId}">
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
             <button type="submit" class="btn btn-primary">7Tour 囉!!</button>

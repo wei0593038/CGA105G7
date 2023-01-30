@@ -51,4 +51,8 @@ public class LocationService {
 	public List<LocationVO> getForLocation(String Address){
 		return dao.getGroup(Address);
 	}
+
+	public List<LocationVO> getForUserId(Integer userId){
+		return dao.findByForeignKey(userId);
+	}
 }
