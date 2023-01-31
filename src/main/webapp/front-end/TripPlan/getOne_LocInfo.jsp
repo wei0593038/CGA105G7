@@ -144,13 +144,16 @@
                 <h4 class="fw-bold mt-3 p-0">我的自訂地點</h4>
                 <!--customLocation btn start -->
                 <c:forEach var="locVO" items="${loclist}">
-                <a href="tripLoc.do?LOC_ID=${locVO.locId}&action=getOneLoc" class="btn trip-btn col-12 d-flex align-items-center bg-cblue my-2">
+                <a href="tripLoc.do?LOC_ID=${locVO.locId}&action=getOneLoc" class="custom-loc btn trip-btn col-12 d-flex align-items-center bg-cblue my-2 p-0">
                   <div class="col-3">
-                    <img src="data:image/png;base64,${Base64.getEncoder().encodeToString(LocationPicService().getLocPic(locVO.locId).get(0).getLocPic())}" class="w-100">
+                    <i class="bi bi-geo-alt-fill fa-2x"></i>
                   </div>
-                  <div class="col-8 px-2">
+                  <div class="col-7 px-2">
                     <p class="text-start text-truncate m-1">${locVO.locName}</p>
                     <p class="text-start text-truncate m-1">${locVO.locAddress}</p>
+                  </div>
+                  <div class="col-2">
+                    <button class="delete-cusLoc" title="刪除我的地點"><i class="bi bi-trash3-fill fa-2x"></i></button>
                   </div>
                 </a>
                 </c:forEach>

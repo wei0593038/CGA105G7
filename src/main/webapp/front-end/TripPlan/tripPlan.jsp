@@ -70,7 +70,7 @@
             <img src="data:image/png;base64,${Base64.getEncoder().encodeToString(tripVO.coverPic)}" class="w-100 h-100">
           </c:if>
           <c:if test="${tripVO.coverPic == null}">
-          	<img style="background-color: gray" class="w-100 h-100">
+          	<img style="background-color: gray" title="尚無圖片" class="w-100 h-100">
           </c:if>
             <div class="trip-time fw-bold input-group align-items-center">
               <input class="form-control trip-in" type="text">
@@ -80,18 +80,26 @@
           </div>
         </div>
 
-        <div class="row">
-          <button class="col date-btn">${SimpleDateFormat("MM/dd").format(tripVO.startDate)}</button>
-          <%for (Date date = tripVO.getStartDate(); !date.equals(tripVO.getEndDate());){
+        <div class="row overflow-hidden flex-nowrap" id="scroll-content">
+          <button id="dateLeft"><i class="bi bi-arrow-left"></i></button>
+          
+          <%int count = 0;
+            for (Date date = tripVO.getStartDate(); !date.equals(tripVO.getEndDate());){
               Calendar cal = Calendar.getInstance();
               cal.setTime(date);
-              cal.add(Calendar.DAY_OF_MONTH,1);
+              if(count != 0){
+              cal.add(Calendar.DATE,1);            	  
+              }
               date = new Date(cal.getTime().getTime());
+              count++;
            %>
-          	<button class="col date-btn"><%=new SimpleDateFormat("MM/dd").format(date)%></button>
-          	<%}%>
+           <form class="p-0 position-relative" style="width: 75px;">
+           	<button class="date-btn"><%=new SimpleDateFormat("MM/dd").format(date)%></button>
+            <button class="p-0 delete-tripDate" title="刪除當天行程"><i class="bi bi-trash3-fill"></i></button>
+           </form>
+          <%}%>
           
-          <button class="col date-btn"><i class="bi bi-arrow-right"></i></button>
+          <button id="dateRight"><i class="bi bi-arrow-right"></i></button>
         </div>
 
         <div class="row ">
@@ -99,8 +107,8 @@
         </div>
 
 	<c:forEach var="tripDetail" items="${list}">
-        <div class="row">
-          <a href="tripLoc.do?LOC_ID=${tripDetail.locId}&action=getOneLoc" class="btn trip-btn col-12 d-flex align-items-center bg-cblue my-1">
+        <div class="row my-2">
+          <a href="tripLoc.do?LOC_ID=${tripDetail.locId}&action=getOneLoc" class="col-10 d-flex align-items-center bg-cblue custom-loc">
             <div class="col-3">
               <img src="data:image/png;base64,${Base64.getEncoder().encodeToString(LocationPicService().getLocPic(tripDetail.locId).get(0).getLocPic())}" class="w-100">
             </div>
@@ -109,6 +117,7 @@
               <p class="m-1 text-truncate">${LocationService().getOneLoc(tripDetail.locId).getLocName()}</p>
             </div>
           </a>
+            <button class="col-2 delete-tripLoc" title="刪除地點"><i class="bi bi-trash3-fill"></i></button>
         </div>
 	</c:forEach>
       </div>
@@ -186,8 +195,28 @@
           <!-- trip notes end -->
         </div>
       </div>
+      
+<!--  search rusult end  -->
+      <div class="col-3 overflow-auto" id="search-content">
+        <div class="d-flex p-2">
+          <h3>搜尋結果 : </h3>
+          <button class="ms-auto btn trip-btn" id="close-search"><i class="bi bi-x-lg"></i></button>
+        </div>
+          <a href="#loc-info" class="d-flex align-items-center bg-cblue my-2 custom-loc p-2"
+            data-bs-toggle="collapse">
+            <div class="col-3">
+              <img src="./images/dog.jpeg" class="w-100">
+            </div>
+            <div class="col-8 px-2">
+              <p class="m-1 text-truncate">地點名稱</p>
+              <p class="m-1 text-truncate">地點地址</p>
+            </div>
+          </a>
+      </div>
+<!--  search rusult end  -->
+      
       <!-- mbr group msg start -->
-      <div class="col-3 p-2 pt-0" id="mbr-chat">
+      <div class="col-3 p-2 pt-0 overflow-hidden" id="mbr-chat">
         <div class="row" style="background-color: rgba(38, 112, 180, 0.6);">
           <h5 class="col-6 text-truncate text-start fw-bold m-0 align-middle py-2">活動名稱(人數)</h5>
           <button class="col-2 btn trip-btn" id="notes-btn"><i class="bi bi-stickies-fill"></i></button>

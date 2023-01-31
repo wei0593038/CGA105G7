@@ -15,6 +15,78 @@ body {
 .date-btn {
   border: none;
   height: 40px;
+  padding: 0;
+  width: 75px;
+  background-color: #abcae7;
+  border-right: 1px solid rgba(128, 128, 128, 0.5);
+}
+
+.date-btn:hover{
+  background-color: #2670b4;
+  color: white;
+}
+
+#dateLeft{
+  border: none;
+  height: 40px;
+  width: 25px;
+  padding: 0;
+  position: sticky;
+  left: 0;
+  z-index: 15;
+  box-shadow: 1px 1px 3px black;
+}
+
+#dateRight{
+  border: none;
+  height: 40px;
+  width: 25px;
+  padding: 0;
+  position: sticky;
+  right: 0;
+  margin-left: auto;
+  z-index: 15;
+  box-shadow: -1px 1px 3px black;
+}
+
+.delete-tripDate{
+  color: red;
+  font-size: 12px;
+  border: 0;
+  background-color: rgba(0, 0, 0, 0);
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 0;
+  height: 100%;
+}
+
+.delete-tripLoc{
+  border: 0;
+  padding: 0;
+  color: red;
+  background-color:#7db2e4 ;
+}
+
+.delete-tripLoc:hover{
+  color: white;
+  background-color: red;
+}
+
+.custom-loc:hover{
+  color: white;
+  background-color: #2670b4;
+}
+
+.delete-cusLoc{
+  border: 0;
+  padding: 0;
+  color: gray;
+  background-color: rgba(0, 0, 0, 0);
+}
+
+.delete-cusLoc:hover{
+  color: red;
 }
 
 .trip-btn {
@@ -185,4 +257,16 @@ button.active {
 .modal-backdrop{
   z-index: 15;
   opacity: 0 !important;
+}
+
+#search-content{
+  position: absolute;
+  top: 66px;
+  right: 0;
+  border-radius: 0 0 15px 15px;
+  background-color: white;
+  padding: 0;
+  z-index: 15;
+  height: calc(100% - 66px);
+  /* display: none; */
 }
