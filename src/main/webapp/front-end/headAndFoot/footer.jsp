@@ -9,6 +9,7 @@
   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
   <script src="<%=request.getContextPath() %>/front-end/js/jquery.datetimepicker.full.js"></script>
   <script src="<%=request.getContextPath() %>/front-end/js/userTripAll.js"></script>
+  <script src="<%=request.getContextPath() %>/front-end/js/tripPlan.js"></script>
 </body>
 
 

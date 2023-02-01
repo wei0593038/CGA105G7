@@ -1,3 +1,6 @@
+<%@page import="com.tripMember.model.TripMemberVO"%>
+<%@page import="com.tripMember.model.TripMemberService"%>
+<%@page import="com.mysql.cj.protocol.a.NativeConstants.StringLengthDataType"%>
 <%@page import="com.location.model.LocationVO"%>
 <%@page import="com.location.model.LocationService"%>
 <%@page import="com.locationPic.model.LocationPicService"%>
@@ -16,28 +19,46 @@
     pageEncoding="UTF-8"%>
 
 <%
-//先接userId UsersVO usersVO = (UsersVO) session.getAttribute("usersVO");
+// 先接userId UsersVO usersVO = (UsersVO) session.getAttribute("usersVO");
 	Integer userId = 1;//這邊先將userId寫死
 	
 // 	String tripId = request.getParameter("TRIP_ID");
-	Integer tripId = 2;
+	Integer tripId = 2;//這邊先將tripId寫死
+	
+// tripId search tripVO
 	TripService tripSvc = new TripService();
 	TripVO tripVO = tripSvc.getOneTrip(tripId);
 	pageContext.setAttribute("tripVO", tripVO);
 	
-// tripDetail take info
+// get tripDetail info
 	TripDetailService tripDetailSvc = new TripDetailService();
-	List<TripDetailVO> list = tripDetailSvc.getTrip_TripDetail(tripId);
+	Date date = tripVO.getStartDate();
+	List<TripDetailVO> list = tripDetailSvc.getTrip_TripDetail(tripId, date);
 	pageContext.setAttribute("list", list);
 	
 // get location info
 	LocationVO locVO = (LocationVO)request.getAttribute("locVO");
-//get location Pic
+
+// get location Pic
 	if(locVO != null){
 		LocationPicService locPicSvc = new LocationPicService();
 		List<LocationPicVO> locPicList = locPicSvc.getLocPic(locVO.getLocId());
 		pageContext.setAttribute("locPicList", locPicList);		
 		}
+
+// get trip member
+	TripMemberService tripMbrSvc = new TripMemberService();
+	List<TripMemberVO> tripMbr = tripMbrSvc.getTripMbr(tripVO.getTripId());
+	pageContext.setAttribute("tripMbr", tripMbr);
+	int inTripCount = 0, invite = 0;//已在旅遊中，邀請中人數
+	for(TripMemberVO member : tripMbr){
+		if(member.getIsMbr() == true){
+			inTripCount++;
+		}else{
+			invite++;
+		}
+	}
+               
 %>
 
   <%@ include file="../headAndFoot/header.jsp" %>
@@ -72,11 +93,17 @@
           <c:if test="${tripVO.coverPic == null}">
           	<img style="background-color: gray" title="尚無圖片" class="w-100 h-100">
           </c:if>
-            <div class="trip-time fw-bold input-group align-items-center">
-              <input class="form-control trip-in" type="text">
-              <span><i class="bi bi-arrow-right-circle-fill fa-2x cblue"></i></span>
-              <input class="form-control trip-in" type="text">
-            </div>
+            <form action="tripPlan.do" method="post" class="trip-time fw-bold input-group align-items-center" enctype="multipart/form-data">
+              	<input class="form-control trip-in" type="text" id="updateStartDate" value="${tripVO.startDate}" name="startDate">
+              	<span><i class="bi bi-arrow-right-circle-fill fa-2x cblue"></i></span>
+              	<input class="form-control trip-in" type="text" id="updateEndDate" value="${tripVO.endDate}" name="endDate">
+              	<button class="btn btn-primary" type="submit" title="送出"><i class="bi bi-check-circle-fill"></i></button>
+              	<input type="hidden" name="action" value="update">
+              	<input type="hidden" name="tripId" value="${tripVO.tripId}">
+              	<input type="hidden" name="tripName" value="${tripVO.tripName}">
+              	<input type="hidden" name="coverPic" value="${Base64.getEncoder().encodeToString(tripVO.coverPic)}">
+              	<input type="hidden" name="note" value="${tripVO.note}">
+            </form>
           </div>
         </div>
 
@@ -84,31 +111,34 @@
           <button id="dateLeft"><i class="bi bi-arrow-left"></i></button>
           
           <%int count = 0;
-            for (Date date = tripVO.getStartDate(); !date.equals(tripVO.getEndDate());){
+            for (Date totalDate = tripVO.getStartDate(); !totalDate.equals(tripVO.getEndDate());){
               Calendar cal = Calendar.getInstance();
-              cal.setTime(date);
+              cal.setTime(totalDate);
               if(count != 0){
               cal.add(Calendar.DATE,1);            	  
               }
-              date = new Date(cal.getTime().getTime());
+              totalDate = new Date(cal.getTime().getTime());
               count++;
            %>
-           <form class="p-0 position-relative" style="width: 75px;">
-           	<button class="date-btn"><%=new SimpleDateFormat("MM/dd").format(date)%></button>
+           <div class="p-0 position-relative Date-form" style="width: 75px;">
+           <a href="tripDetail.do?TRIP_ID=<%=tripId%>&DATE=<%=totalDate%>&action=getTrip_TripDetail" class="d-block">
+           	<button class="date-btn" id="tripDate-<%=count%>" onclick="focusDate(this)"><%=new SimpleDateFormat("MM/dd").format(totalDate)%></button>
+           </a>
+           <form action="tripDetail.do" method="post">
             <button class="p-0 delete-tripDate" title="刪除當天行程"><i class="bi bi-trash3-fill"></i></button>
+            <input type="hidden" name="action" value="delete_Date">
+            <input type="hidden" name="TRIP_ID" value="${tripVO.tripId}">
+            <input type="hidden" name="DATE" value="<%=totalDate%>">
            </form>
+           </div>
           <%}%>
           
           <button id="dateRight"><i class="bi bi-arrow-right"></i></button>
         </div>
 
-        <div class="row ">
-          <p class="col-6 px-3 py-2 m-0">第一天:${SimpleDateFormat("MM/dd").format(tripVO.startDate)}</p>
-        </div>
-
-	<c:forEach var="tripDetail" items="${list}">
+	<c:forEach var="tripDetail" items="${activeList == null ? list : activeList}">
         <div class="row my-2">
-          <a href="tripLoc.do?LOC_ID=${tripDetail.locId}&action=getOneLoc" class="col-10 d-flex align-items-center bg-cblue custom-loc">
+          <form action="tripLoc.do" method="post" class="col-10 d-flex align-items-center bg-cblue custom-loc" onclick="$(this).submit()">
             <div class="col-3">
               <img src="data:image/png;base64,${Base64.getEncoder().encodeToString(LocationPicService().getLocPic(tripDetail.locId).get(0).getLocPic())}" class="w-100">
             </div>
@@ -116,8 +146,17 @@
               <p class="m-1">${SimpleDateFormat("HH:mm").format(tripDetail.arrivalTime)} - ${SimpleDateFormat("HH:mm").format(tripDetail.leaveTime)}</p>
               <p class="m-1 text-truncate">${LocationService().getOneLoc(tripDetail.locId).getLocName()}</p>
             </div>
-          </a>
-            <button class="col-2 delete-tripLoc" title="刪除地點"><i class="bi bi-trash3-fill"></i></button>
+            <input type="hidden" name="LOC_ID" value="${tripDetail.locId}">
+            <input type="hidden" name="TRIP_ID" value="${tripVO.tripId}">
+            <input type="hidden" name="DATE" value="${tripVO.startDate}">
+            <input type="hidden" name="action" value="getOneLoc">
+            <input type="hidden" name="QueryStr" value="<%=request.getQueryString()%>">
+          </form>
+          <form class="col-2 text-center p-0" action="tripDetail.do" method="post">
+            <button type="submit" class="h-100 w-100 border-0 delete-tripLoc"><i class="bi bi-trash3-fill fa-2x m-auto"></i></button>
+            <input type="hidden" name="action" value="deleteTripLoc">
+            <input type="hidden" name="TRIP_DETAIL_ID" value="${tripDetail.tripDatailId}">
+          </form>
         </div>
 	</c:forEach>
       </div>
@@ -130,52 +169,64 @@
       <div class="col-3 locInfo-title" id="mem-notes">
         <div class="row">
           <ul class="nav nav-pills p-0" role="tablist">
-            <li class="nav-item w-50" role="presentation">
+            <li class="nav-item col-5" role="presentation">
               <button class="btn trip-btn w-100 active" id="mbr-btn" data-bs-toggle="pill" data-bs-target="#mbr"
                 type="button" role="tab" aria-controls="mbr" aria-selected="true">
                 <i class="bi bi-people-fill fa-2x"></i>
-                <p class="m-0 d-inline">成員(5)</p>
+                <p class="m-0 d-inline">成員(<%=inTripCount%>)</p>
               </button>
             </li>
-            <li class="nav-item w-50" role="presentation">
+            <li class="nav-item col-5" role="presentation">
               <button class="btn trip-btn w-100" id="note-btn" data-bs-toggle="pill" data-bs-target="#notes"
                 type="button" role="tab" aria-controls="notes" aria-selected="false">
                 <i class="bi bi-stickies-fill fa-2x"></i>
                 <p class="m-0 d-inline">筆記</p>
               </button>
             </li>
+            
+            <li class="nav-item col-2" role="presentation">
+              <button class="btn trip-btn w-100 d-block h-100" id="close-mbr" onclick="$('#mem-notes').css('display', 'none')">
+                <i class="bi bi-x-lg"></i>
+              </button>
+            </li>
+            
           </ul>
 
           <!-- trip member start -->
-          <div class="tab-content h-100 overflow-auto">
+          <div class="tab-content h-100 overflow-auto p-0">
             <div class="tab-pane fade show active p-3 overflow-auto" id="mbr" role="tabpanel" aria-labelledby="mbr-tab"
               style="height: calc(100vh - 66px - 65px);">
               <div class="row">
-                <h3 class="col-12 text-center text-truncate">
-                  活動名稱活動名稱活動名稱活動名稱活動名稱
-                </h3>
-              </div>
-              <div class="row">
-                <form action="" method="post">
-                  <input class="col-8 newLoc-input" type="text" placeholder="請輸入好友帳號">
-                  <button class="btn trip-btn py-0 px-1" type="submit"><i
-                      class="bi bi-person-plus-fill fa-2x"></i></button>
+                <form action="tripMbr.do" method="post">
+                  <input class="col-8 newLoc-input" type="text" name="USER_ACCOUNT" placeholder="請輸入好友帳號" required><!-- 先放userID -->
+                  <button class="btn trip-btn py-0 px-1" type="submit">
+                  	<i class="bi bi-person-plus-fill fa-2x"></i>
+                  </button>
+                  <input type="hidden" name="TRIP_ID" value="${tripVO.tripId}">
+                  <input type="hidden" name="action" value="insert">
                 </form>
               </div>
               <div class="row">
-                <h5 class="col-12 fw-bold">群組成員</h5>
-                <div class="col-12 my-2">
-                  <img src="./images/dog.jpeg" alt="" class="mbr-pic">
-                  <h5 class="d-inline align-middle">成員名稱</h5>
-                </div>
+                <h5 class="col-12 fw-bold">群組成員(<%=inTripCount%>)</h5>
+              <c:forEach var="tripMbrVO" items="${tripMbr}">
+              	<c:if test="${tripMbrVO.isMbr == true }">
+                  <div class="col-12 my-2">
+                  	<img src="" alt="" class="mbr-pic">
+                  	<h5 class="d-inline align-middle">成員名稱</h5>
+                  </div>
+                </c:if>
+              </c:forEach>
               </div>
-
               <div class="row">
-                <h5 class="col-12 fw-bold mt-2 mb-0">邀請中(人數)</h5>
-                <div class="col-12 my-2">
-                  <img src="./images/dog.jpeg" alt="" class="mbr-pic">
-                  <h5 class="d-inline align-middle">成員名稱</h5>
-                </div>
+                <h5 class="col-12 fw-bold mt-2 mb-0">邀請中(<%=invite%>)</h5>
+              <c:forEach var="tripMbrVO" items="${tripMbr}">
+              	<c:if test="${tripMbrVO.isMbr == false }">
+                  <div class="col-12 my-2">
+                  	<img src="" alt="" class="mbr-pic">
+                  	<h5 class="d-inline align-middle">成員名稱</h5>
+                  </div>
+                </c:if>
+              </c:forEach>
               </div>
             </div>
             <!-- trip member end -->
@@ -184,8 +235,14 @@
             <div class="tab-pane fade" id="notes" role="tabpanel" aria-labelledby="notes-tab">
               <div class="row">
                 <div class="col m-2">
-                  <form action="" method="post">
-                    <textarea name="" id="note-input" placeholder="旅程中，有些物品必定要帶的。可以寫在這邊，來提醒旅遊成員喔~">${tripVO.note}</textarea>
+                  <form action="tripPlan.do" method="post">
+                    <textarea name="note" id="note-input" placeholder="旅程中，有些物品必定要帶的。可以寫在這邊，來提醒旅遊成員喔~">${tripVO.note}</textarea>
+                    <input type="hidden" name="tripId" value="${tripVO.tripId }">
+                    <input type="hidden" name="tripName" value="${tripVO.tripName }">
+                    <input type="hidden" name="startDate" value="${tripVO.startDate }">
+                    <input type="hidden" name="endDate" value="${tripVO.endDate }">
+                    <input type="hidden" name="coverPic" value="${Base64.getEncoder().encodeToString(tripVO.coverPic)}">
+                    <input type="hidden" name="action" value="update">
                     <button class="btn trip-btn col-12 border-dark">儲存</button>
                   </form>
                 </div>
@@ -196,29 +253,34 @@
         </div>
       </div>
       
-<!--  search rusult end  -->
+<!--  search rusult start  -->
+	<c:if test="${searchWord != null}">
       <div class="col-3 overflow-auto" id="search-content">
         <div class="d-flex p-2">
           <h3>搜尋結果 : </h3>
           <button class="ms-auto btn trip-btn" id="close-search"><i class="bi bi-x-lg"></i></button>
         </div>
+        <c:forEach var="locVO" items="${searchList}">
           <a href="#loc-info" class="d-flex align-items-center bg-cblue my-2 custom-loc p-2"
             data-bs-toggle="collapse">
             <div class="col-3">
-              <img src="./images/dog.jpeg" class="w-100">
+              <img src="data:image/png;base64,${Base64.getEncoder().encodeToString(LocationPicService().getLocPic(locVO.locId).get(0).getLocPic())}" class="w-100">
             </div>
             <div class="col-8 px-2">
-              <p class="m-1 text-truncate">地點名稱</p>
-              <p class="m-1 text-truncate">地點地址</p>
+              <p class="m-1 text-truncate">${locVO.locName}</p>
+              <p class="m-1 text-truncate">${locVO.locAddress }</p>
             </div>
           </a>
+        </c:forEach> 
       </div>
+      <script>$('#search-content').css('display','block')</script>
+     </c:if>
 <!--  search rusult end  -->
       
       <!-- mbr group msg start -->
       <div class="col-3 p-2 pt-0 overflow-hidden" id="mbr-chat">
         <div class="row" style="background-color: rgba(38, 112, 180, 0.6);">
-          <h5 class="col-6 text-truncate text-start fw-bold m-0 align-middle py-2">活動名稱(人數)</h5>
+          <h5 class="col-6 text-truncate text-start fw-bold m-0 align-middle py-2">聊天室(<%=inTripCount%>)</h5>
           <button class="col-2 btn trip-btn" id="notes-btn"><i class="bi bi-stickies-fill"></i></button>
           <button class="col-2 btn trip-btn" id="mbrs-btn"><i class="bi bi-gear-fill"></i></button>
           <button class="col-2 btn trip-btn" id="close-msg"><i class="bi bi-dash"></i></button>
@@ -267,7 +329,6 @@
 
   <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
     integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
-  <script src="<%=request.getContextPath() %>/front-end/js/tripPlan.js"></script>
   <script src="<%=request.getContextPath() %>/front-end/js/map.js"></script>
   
   

@@ -1,7 +1,9 @@
 package com.tripDetail.controller;
 
 import java.io.IOException;
+import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -44,6 +46,49 @@ public class tripDetailServlet extends HttpServlet{
 			req.setAttribute("tripDetailVO", tripDetailVO);
 			
 			//3.完成新增準備轉交
+			String url = "/front-end/TripPlan/tripPlan.jsp";
+			req.getRequestDispatcher(url).forward(req, res);
+		}
+		
+		if ("getTrip_TripDetail".equals(action)) {//來自tripPlan.jsp的請求
+			//1.接收請求參數
+			Integer tripId = Integer.valueOf(req.getParameter("TRIP_ID"));
+			Date date = Date.valueOf(req.getParameter("DATE"));
+			
+			//2.開始搜尋
+			TripDetailService tripDetailSvc = new TripDetailService();
+			List<TripDetailVO> activeList = tripDetailSvc.getTrip_TripDetail(tripId, date);
+			req.setAttribute("activeList", activeList);
+			
+			//3.完成新增準備轉交
+			String url = "/front-end/TripPlan/tripPlan.jsp";
+			req.getRequestDispatcher(url).forward(req, res);
+			
+		}
+		
+		if ("delete_Date".equals(action)) {//來自tripPlan.jsp的請求
+			//1.接收請求參數
+			Integer tripId = Integer.valueOf(req.getParameter("TRIP_ID"));
+			Date date = Date.valueOf(req.getParameter("DATE"));
+			
+			//2.開始刪除
+			TripDetailService tripDetailSvc = new TripDetailService();
+			tripDetailSvc.deleteByDate(tripId, date);
+			
+			//3.刪除完成後開始轉交
+			String url = "/front-end/TripPlan/tripPlan.jsp";
+			req.getRequestDispatcher(url).forward(req, res);
+		}
+		
+		if ("deleteTripLoc".equals(action)) {//來自tripPlan.jsp的請求
+			//1.接收請求參數
+			Integer tripDetailId = Integer.valueOf(req.getParameter("TRIP_DETAIL_ID"));
+			
+			//2.開始刪除
+			TripDetailService tripDetailSvc = new TripDetailService();
+			tripDetailSvc.deleteTripDetail(tripDetailId);
+			
+			//3.刪除完成後開始轉交
 			String url = "/front-end/TripPlan/tripPlan.jsp";
 			req.getRequestDispatcher(url).forward(req, res);
 		}

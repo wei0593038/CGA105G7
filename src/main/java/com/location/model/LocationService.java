@@ -55,4 +55,8 @@ public class LocationService {
 	public List<LocationVO> getForUserId(Integer userId){
 		return dao.findByForeignKey(userId);
 	}
+
+	public void deleteUserLoc(Integer locId) {
+		dao.delete(locId);
+	}
 }

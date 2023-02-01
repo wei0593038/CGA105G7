@@ -1,5 +1,7 @@
 package com.tripMember.model;
 
+import java.util.List;
+
 public class TripMemberService {
 	private TripMemberDAO_interface dao;
 	
@@ -30,7 +32,7 @@ public class TripMemberService {
 		dao.delete(tripMbrId);
 	}
 	
-	public TripMemberVO getTripMbr(Integer tripId) {
+	public List<TripMemberVO> getTripMbr(Integer tripId) {
 		return dao.findByTripId(tripId);
 	}
 }

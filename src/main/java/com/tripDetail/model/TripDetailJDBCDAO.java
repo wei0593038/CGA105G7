@@ -1,6 +1,7 @@
 package com.tripDetail.model;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,12 +21,14 @@ public class TripDetailJDBCDAO implements TripDetailDAO_interface{
 			"UPDATE trip_detail set TRIP_ID=?, LOC_ID=?, ARRIVAL_TIME=?, LEAVE_TIME=? where TRIP_DETAIL_ID = ?";
 	private static final String DELETE = 
 			"DELETE FROM trip_detail where TRIP_DETAIL_ID = ?";
+	private static final String DELETE_DATE = 
+			"DELETE FROM trip_detail WHERE TRIP_ID=? AND DATE(ARRIVAL_TIME)=?;";
 	private static final String GET_ONE_STMT = 
 			"SELECT TRIP_DETAIL_ID,TRIP_ID,LOC_ID,ARRIVAL_TIME,LEAVE_TIME FROM trip_detail where TRIP_DETAIL_ID = ?";
 	private static final String GET_ALL_STMT = 
 			"SELECT TRIP_DETAIL_ID,TRIP_ID,LOC_ID,ARRIVAL_TIME,LEAVE_TIME FROM trip_detail order by TRIP_DETAIL_ID";
 	private static final String GET_ALL_FORTRIP = 
-			"SELECT TRIP_DETAIL_ID,TRIP_ID,LOC_ID,ARRIVAL_TIME,LEAVE_TIME FROM trip_detail WHERE TRIP_ID=?";
+			"SELECT TRIP_DETAIL_ID,TRIP_ID,LOC_ID,ARRIVAL_TIME,LEAVE_TIME FROM trip_detail WHERE TRIP_ID=? AND DATE(ARRIVAL_TIME)=?";
 
 	
 	@Override
@@ -227,7 +230,6 @@ public class TripDetailJDBCDAO implements TripDetailDAO_interface{
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {
-				// empVO 也稱為 Domain objects
 				tripDetailVO = new TripDetailVO();
 				tripDetailVO.setTripDatailId(rs.getInt("TRIP_DETAIL_ID"));
 				tripDetailVO.setTripId(rs.getInt("TRIP_ID"));
@@ -274,7 +276,7 @@ public class TripDetailJDBCDAO implements TripDetailDAO_interface{
 	}
 	
 	@Override
-	public List<TripDetailVO> getAll_ForTRIP(Integer tripId){
+	public List<TripDetailVO> getAll_ForTRIP(Integer tripId,Date date){
 		List<TripDetailVO> list = new ArrayList<TripDetailVO>();
 		TripDetailVO tripDetailVO =null;
 
@@ -288,6 +290,7 @@ public class TripDetailJDBCDAO implements TripDetailDAO_interface{
 			con = DriverManager.getConnection(url, userid, passwd);
 			pstmt = con.prepareStatement(GET_ALL_FORTRIP);
 			pstmt.setInt(1, tripId);
+			pstmt.setDate(2, date);
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {
@@ -335,6 +338,51 @@ public class TripDetailJDBCDAO implements TripDetailDAO_interface{
 			}
 		}
 		return list;
+	}
+
+	
+	@Override
+	public void deleteByDate(Integer tripId, Date date) {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+
+		try {
+
+			Class.forName(driver);
+			con = DriverManager.getConnection(url, userid, passwd);
+			pstmt = con.prepareStatement(DELETE_DATE);
+
+			pstmt.setInt(1, tripId);
+			pstmt.setDate(2, date);
+
+			pstmt.executeUpdate();
+
+			// Handle any driver errors
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Couldn't load database driver. "
+					+ e.getMessage());
+			// Handle any SQL errors
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. "
+					+ se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+		
 	}
 	
 

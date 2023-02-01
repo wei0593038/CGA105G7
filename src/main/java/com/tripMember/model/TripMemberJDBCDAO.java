@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TripMemberJDBCDAO implements TripMemberDAO_interface{
 	String driver = "com.mysql.cj.jdbc.Driver";
@@ -20,6 +22,7 @@ public class TripMemberJDBCDAO implements TripMemberDAO_interface{
 			"DELETE FROM trip_member where TRIP_MBR_ID = ?";
 	private static final String GET_GROUP_STMT = 
 			"SELECT TRIP_MBR_ID,TRIP_ID,USER_ID,IS_MBR FROM trip_member where TRIP_ID = ?";
+	
 	@Override
 	public void insert(TripMemberVO tripMemberVO) {
 		Connection con = null;
@@ -59,6 +62,7 @@ public class TripMemberJDBCDAO implements TripMemberDAO_interface{
 		}
 		
 	}
+	
 	@Override
 	public void jointInsert(TripMemberVO tripMemberVO, Connection con) {
 		PreparedStatement pstmt = null;
@@ -85,8 +89,6 @@ public class TripMemberJDBCDAO implements TripMemberDAO_interface{
 		}
 		
 	}
-
-	
 	
 	@Override
 	public void update(TripMemberVO tripMemberVO) {
@@ -174,8 +176,10 @@ public class TripMemberJDBCDAO implements TripMemberDAO_interface{
 	}
 
 	@Override
-	public TripMemberVO findByTripId(Integer tripId) {
+	public List<TripMemberVO> findByTripId(Integer tripId) {
+		List<TripMemberVO> list = new ArrayList<TripMemberVO>();
 		TripMemberVO tripMemberVO =null;
+		
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -196,7 +200,8 @@ public class TripMemberJDBCDAO implements TripMemberDAO_interface{
 				tripMemberVO.setTripId(rs.getInt("TRIP_ID"));
 				tripMemberVO.setUserId(rs.getInt("USER_ID"));
 				tripMemberVO.setIsMbr(rs.getBoolean("IS_MBR"));
-
+				
+				list.add(tripMemberVO);
 			}
 
 			// Handle any driver errors
@@ -229,7 +234,7 @@ public class TripMemberJDBCDAO implements TripMemberDAO_interface{
 				}
 			}
 		}
-		return tripMemberVO;
+		return list;
 	}
 	
 

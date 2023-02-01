@@ -33,8 +33,7 @@
               </button>
             </li>
              <li class="nav-item col-2" role="presentation">
-              <button class="btn trip-btn w-100 h-100" id="cusLoc-tab" data-bs-toggle="pill" data-bs-target="#cusLoc"
-                type="button" role="tab" aria-controls="cusLoc" aria-selected="false" onclick="closeLocInfo()">
+              <button class="btn trip-btn w-100 h-100" onclick="closeLocInfo()">
                 <i class="bi bi-x-lg"></i>
               </button>
             </li>
@@ -144,7 +143,7 @@
                 <h4 class="fw-bold mt-3 p-0">我的自訂地點</h4>
                 <!--customLocation btn start -->
                 <c:forEach var="locVO" items="${loclist}">
-                <a href="tripLoc.do?LOC_ID=${locVO.locId}&action=getOneLoc" class="custom-loc btn trip-btn col-12 d-flex align-items-center bg-cblue my-2 p-0">
+                <a href="tripLoc.do?LOC_ID=${locVO.locId}&TRIP_ID=${tripVO.tripId}&DATE=${tripVO.startDate}&action=getOneLoc" class="custom-loc btn trip-btn col-12 d-flex align-items-center bg-cblue my-2 p-0">
                   <div class="col-3">
                     <i class="bi bi-geo-alt-fill fa-2x"></i>
                   </div>
@@ -152,9 +151,11 @@
                     <p class="text-start text-truncate m-1">${locVO.locName}</p>
                     <p class="text-start text-truncate m-1">${locVO.locAddress}</p>
                   </div>
-                  <div class="col-2">
+                  <form action="tripLoc.do" method="post" class="col-2">
                     <button class="delete-cusLoc" title="刪除我的地點"><i class="bi bi-trash3-fill fa-2x"></i></button>
-                  </div>
+                    <input type="hidden" name="action" value="deleteUserLoc">
+                    <input type="hidden" name="LOC_ID" value="${locVO.locId}">
+                  </form>
                 </a>
                 </c:forEach>
                 <!--customLocation btn end -->

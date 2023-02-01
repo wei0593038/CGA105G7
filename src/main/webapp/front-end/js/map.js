@@ -1,3 +1,16 @@
+//取消body scroll
+$('body').css('overflow','hidden');
+//search Location
+$(document).ready(()=>{
+	$('#search-loc').html(`
+		<input type="search" name="word" class="form-control p-0 border-0 fs-5">
+		<input type="hidden" name="action" value="search">
+		<input type="hidden" name="forward" value="front-end">
+    	<button type="submit" class="btn btn-primary">
+      	<i class="fas fa-search"></i>
+    	</button>`);		
+});
+
 // *** 放置地圖 24.958259814942263, 121.22486263762384
 let zoom = 17; // 0 - 18
 //let center = [24.958259814942263, 121.22486263762384]; // 中心點座標
@@ -25,3 +38,5 @@ function onMapClick(e) {
   // .setContent(`緯度：${lat}<br/>經度：${lng}`)
   // .openOn(map);
 }
+
+

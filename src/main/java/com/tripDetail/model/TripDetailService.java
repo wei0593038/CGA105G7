@@ -1,5 +1,6 @@
 package com.tripDetail.model;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -43,7 +44,11 @@ public class TripDetailService {
 		return dao.getAll();
 	}
 	
-	public List<TripDetailVO> getTrip_TripDetail(Integer tripId){
-		return dao.getAll_ForTRIP(tripId);
+	public List<TripDetailVO> getTrip_TripDetail(Integer tripId,Date date){
+		return dao.getAll_ForTRIP(tripId, date);
+	}
+
+	public void deleteByDate(Integer tripId, Date date) {
+		dao.deleteByDate(tripId, date);
 	}
 }

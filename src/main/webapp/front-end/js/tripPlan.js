@@ -1,6 +1,3 @@
-//取消body scroll
-$('body').css('overflow','hidden');
-
 // 讓以自訂的景點打開資訊
 $('.custom-loc').click((e) => {
   $('#locInfo-tab').addClass('active');  $('#locInfo').addClass('show active');
@@ -104,4 +101,39 @@ $("#dateLeft").click(function() {
   $('#close-search').click(function(){
     $('#search-content').css('display','none');
   });
+  
+  //dateTimePicker
+
+$.datetimepicker.setLocale('zh'); // kr ko ja en
+$(function(){
+	let today = new Date();
+	 $('#updateStartDate').datetimepicker({
+	  format:'Y-m-d',
+	  onShow:function(){
+	   this.setOptions({
+		minDate: today,
+	    maxDate:$('#updateEndDate').val()?$('#updateEndDate').val():false
+	   })
+	  },
+	  timepicker:false
+	 });
+	 
+	 $('#updateEndDate').datetimepicker({
+	  format:'Y-m-d',
+	  onShow:function(){
+	   this.setOptions({
+	    minDate:$('#updateStartDate').val()?$('#updateStartDate').val():today
+	   })
+	  },
+	  timepicker:false
+	 });
+});
+
+//tripDate active
+$('#tripDate-1').addClass('active');
+
+function focusDate(e){
+	$('.Date-form button:first-child.active').removeClass('active');
+	$(e).addClass('active');
+}
 

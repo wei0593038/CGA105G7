@@ -10,6 +10,8 @@ body {
 
 .trip-in {
   border: none;
+  padding: 5px;
+  background-color: rgba(255, 255, 255, .5);
 }
 
 .date-btn {
@@ -63,7 +65,6 @@ body {
 
 .delete-tripLoc{
   border: 0;
-  padding: 0;
   color: red;
   background-color:#7db2e4 ;
 }
@@ -76,6 +77,7 @@ body {
 .custom-loc:hover{
   color: white;
   background-color: #2670b4;
+  cursor: pointer;
 }
 
 .delete-cusLoc{
@@ -268,5 +270,5 @@ button.active {
   padding: 0;
   z-index: 15;
   height: calc(100% - 66px);
-  /* display: none; */
+  display: none;
 }

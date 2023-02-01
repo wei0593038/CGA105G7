@@ -9,7 +9,7 @@ String search =(String)request.getAttribute("search");
 String searchWord;
 List<LocationVO> list;
 if("search".equals(search)){
-	list = (List<LocationVO>)request.getAttribute("list");
+	list = (List<LocationVO>)request.getAttribute("searchList");
 	searchWord = (String)request.getAttribute("searchWord");
 }else{
 LocationService locSvc = new LocationService();

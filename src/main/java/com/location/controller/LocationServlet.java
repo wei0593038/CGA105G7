@@ -14,7 +14,8 @@ import javax.servlet.http.Part;
 import com.location.model.LocationService;
 import com.location.model.LocationVO;
 
-@WebServlet("/front-end/TripPlan/tripLoc.do") //等同到web.xml註冊
+ 
+@WebServlet(urlPatterns = {"/front-end/TripPlan/tripLoc.do","/back-end/Location/loc.do"})//等同到web.xml註冊
 @MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 5 * 1024 * 1024, maxRequestSize = 5 * 5 * 1024 * 1024)
 public class LocationServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -104,23 +105,31 @@ public class LocationServlet extends HttpServlet {
 			
 		}
 		
-		if("search".equals(action)) {
+		if("search".equals(action)) {//來自tripPlan.jsp的請求
+			//1.接收請求參數
 			String searchWord =req.getParameter("word");
+			String forwardWhere = String.valueOf(req.getParameter("forward"));
+			
+			//2.開始搜尋
 			LocationService locSvc = new LocationService();
 			List<LocationVO> list = locSvc.getForLocation(searchWord);
 
 			req.setAttribute("searchWord", searchWord);
 			req.setAttribute("search", "search");
-			req.setAttribute("list", list); 
-
-			String url = "/back-end/Location/locManage.jsp";
+			req.setAttribute("searchList", list); 
+			
+			//3.搜尋完成開始轉發
+			String url = forwardWhere.equals("front-end")? "/front-end/TripPlan/tripPlan.jsp":"/back-end/Location/locManage.jsp";
 			req.getRequestDispatcher(url).forward(req, res);
 			
 		}
 		
-		if ("getOneLoc".equals(action)) {//來自tripPlan.jsp的請求
+		if ("getOneLoc".equals(action)) {//來自tripPlan.jsp getOne_LocInfo.jsp的請求
 			//1.接收請求參數
 			Integer locId = Integer.valueOf(req.getParameter("LOC_ID"));
+			String tripId = req.getParameter("TRIP_ID");
+			String date = req.getParameter("DATE");
+			String queryStr = req.getParameter("QueryStr");
 			
 			//2.開始搜尋
 			LocationService locSvc = new LocationService();
@@ -129,9 +138,27 @@ public class LocationServlet extends HttpServlet {
 			req.setAttribute("locVO", locVO);
 			
 			//3.搜尋結束開始轉交
-			String url = "/front-end/TripPlan/tripPlan.jsp";
+			String url = null;
+			if (queryStr == null) {
+				url = "/front-end/TripPlan/tripDetail.do?TRIP_ID=" + tripId + "&DATE=" + date +"&action=getTrip_TripDetail";
+			}else {
+				url = queryStr.equals("null")?"/front-end/TripPlan/tripDetail.do?TRIP_ID=" + tripId + "&DATE=" + date + "&action=getTrip_TripDetail":"/front-end/TripPlan/tripDetail.do?" + queryStr;
+			}	
 			req.getRequestDispatcher(url).forward(req, res);
 			
+		}
+		
+		if ("deleteUserLoc".equals(action)) {//來自getOne_LocInfo.jsp的請求
+			//1.接收請求參數
+			Integer locId = Integer.valueOf(req.getParameter("LOC_ID"));
+			
+			//2.開始刪除資料
+			LocationService locSvc = new LocationService();
+			locSvc.deleteUserLoc(locId);
+			
+			//3.刪除完成後開始轉交
+			String url = "/front-end/TripPlan/tripPlan.jsp";
+			req.getRequestDispatcher(url).forward(req, res);
 		}
 
 	}

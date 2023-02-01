@@ -2,6 +2,7 @@ package com.trip.controller;
 
 import java.io.IOException;
 import java.sql.Date;
+import java.util.Base64;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -13,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.trip.model.TripService;
 import com.trip.model.TripVO;
 
-@WebServlet("/front-end/TripAll/trip.do")
+@WebServlet(urlPatterns = {"/front-end/TripAll/trip.do","/front-end/TripPlan/tripPlan.do"})
 @MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 5 * 1024 * 1024, maxRequestSize = 5 * 5 * 1024 * 1024)
 public class TripServlet extends HttpServlet{
 	@Override
@@ -99,6 +100,28 @@ public class TripServlet extends HttpServlet{
 			//3.完成後準備轉交
 			String url = "/front-end/TripAll/trip.do?TRIP_ID=" + tripId + "&action=getPic_For_Update";
 			req.getRequestDispatcher(url).forward(req, res);
+		}
+		
+		if("update".equals(action)) {
+			//1.接收參數
+			Date startDate = Date.valueOf(req.getParameter("startDate"));
+			Date endDate = Date.valueOf(req.getParameter("endDate"));
+			Integer tripId = Integer.valueOf(req.getParameter("tripId"));
+			String tripName = req.getParameter("tripName");
+			byte[] coverPic = Base64.getDecoder().decode(req.getParameter("coverPic"));
+			String note = req.getParameter("note");
+			
+			
+			//2.開始更新資料
+			TripService tripSvc = new TripService();
+			TripVO tripVO = tripSvc.updateTrip(tripName, startDate, endDate, coverPic, note, tripId);
+			req.setAttribute("tripVO", tripVO);
+			
+			//3.更新完成準備轉交
+			String url = "/front-end/TripPlan/tripPlan.jsp";
+			req.getRequestDispatcher(url).forward(req, res);
+			
+			
 		}
 		
 	}

@@ -63,10 +63,8 @@
         </ul>
         <ul class="navbar-nav mb-2 mb-lg-0">
           <li class="nav-item bg-dblue rounded mx-3 input-group">
-            <input type="search" class="form-control">
-            <button type="button" class="btn btn-primary">
-              <i class="fas fa-search"></i>
-            </button>
+            <form action="tripLoc.do" method="post" class="d-flex" id="search-loc">
+            </form>
           </li>
 
           <li class="nav-item user-msg">

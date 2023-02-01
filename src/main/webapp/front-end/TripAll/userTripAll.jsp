@@ -137,7 +137,7 @@
             </div>
           </div>
           <input type="hidden" name="action" value="insert">
-		  <input type="hidden" name="userId" value="${userId}">
+		  <input type="hidden" name="userId" value="<%=userId%>">
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
             <button type="submit" class="btn btn-primary">7Tour 囉!!</button>
