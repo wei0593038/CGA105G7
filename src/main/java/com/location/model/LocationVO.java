@@ -9,7 +9,7 @@ public class LocationVO implements Serializable{
 	private Integer userId;
 	private String locName;
 	private String longitude;
-	private String Latitude;
+	private String latitude;
 	private String locAddress;
 	private String locPhone;
 	private Integer locStatus;
@@ -40,10 +40,10 @@ public class LocationVO implements Serializable{
 		this.longitude = longitude;
 	}
 	public String getLatitude() {
-		return Latitude;
+		return latitude;
 	}
 	public void setLatitude(String latitude) {
-		Latitude = latitude;
+		this.latitude = latitude;
 	}
 	public String getLocAddress() {
 		return locAddress;

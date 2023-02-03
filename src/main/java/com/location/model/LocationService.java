@@ -11,7 +11,7 @@ public class LocationService {
 	}
 	
 	public LocationVO addLoc(Integer userId, String locName, String longitude, String latitude, String locAddresss,
-			String locPhone,Collection<Part> pic) {
+			String locPhone, Integer locStatus, Collection<Part> pic) {
 		
 		LocationVO locVO = new LocationVO();
 		locVO.setUserId(userId);
@@ -20,7 +20,9 @@ public class LocationService {
 		locVO.setLatitude(latitude);
 		locVO.setLocAddress(locAddresss);
 		locVO.setLocPhone(locPhone);
-		dao.insertHasPic(locVO, pic);
+		locVO.setLocStatus(locStatus);
+		String locId = dao.insertHasPic(locVO, pic);
+		locVO.setLocId(Integer.valueOf(locId));
 		
 		return locVO;
 	}
@@ -48,8 +50,8 @@ public class LocationService {
 		return locVO;
 	}
 	
-	public List<LocationVO> getForLocation(String Address){
-		return dao.getGroup(Address);
+	public List<LocationVO> getForLocation(String searchWord, Integer... locStatus){
+		return dao.getGroup(searchWord, locStatus);
 	}
 
 	public List<LocationVO> getForUserId(Integer userId){

@@ -11,8 +11,9 @@
 //先接userId UsersVO usersVO = (UsersVO) session.getAttribute("usersVO");
 	
 //先去userId去找出 該user的自訂景點
+	Integer userID = (Integer)session.getAttribute("userId");
 	LocationService locSvc = new LocationService();
-	List<LocationVO> loclist = locSvc.getForUserId(userId);
+	List<LocationVO> loclist = locSvc.getForUserId(userID);
 	pageContext.setAttribute("loclist", loclist);
 %>
    
@@ -53,12 +54,18 @@
                 </div>
                 <div class="carousel-inner">
                 
+               <c:if test="${locPicList.size() != 0 }">
                 <c:forEach var="locPic" items="${locPicList}" varStatus="num">
                   <div class="carousel-item" id="infoPic-${num.index}" style="height: 250px;">
                     <img src="data:image/png;base64,${Base64.getEncoder().encodeToString(locPic.locPic)}" class="d-block w-100 h-100">
                   </div>
                 </c:forEach>
-                  
+               </c:if>
+                <c:if test="${locPicList.size() == 0 }">
+                  <div class="carousel-item" id="infoPic-0" style="height: 250px;">
+                  	<p class="text-center bg-secondary h-100 m-0 fs-3 text-white" style="line-height: 250px">查無圖片</p>
+                  </div>
+                </c:if>
                 </div>
                 <button class="carousel-control-prev" type="button" data-bs-target="#loc-pic" data-bs-slide="prev">
                   <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -129,13 +136,19 @@
             <!-- custom location start -->
             <div class="tab-pane fade container  overflow-auto" style="height: calc(100vh - 66px - 65px);" id="cusLoc"
               role="tabpanel" aria-labelledby="cusLoc-tab">
-              <form action="#" method="post" class="row">
+              <form action="tripLoc.do" method="post" class="row" enctype="multipart/form-data">
                 <h3 class="fw-bold p-0 mt-3">建立新景點</h3>
                 <p class="text-danger">* 星號為必填欄位</p>
-                <input type="text" class="col-12 newLoc-input" placeholder="*請輸入地點名稱">
-                <input type="text" class="col-12 newLoc-input" placeholder="*請輸入地址">
-                <input type="text" class="col-12 newLoc-input" placeholder="請輸入電話">
-                <button class="btn trip-btn mt-3 border-dark">建立</button>
+                <input type="text" class="col-12 newLoc-input" name="loc_name" placeholder="*請輸入地點名稱">
+                <input type="text" class="col-12 newLoc-input" name="address" id="address" placeholder="*請輸入地址">
+                <input type="text" class="col-12 newLoc-input" name="phone" placeholder="請輸入電話">
+                <input type="hidden" name="userId" value="<%=userID%>">
+                <input type="hidden" name="longitude" id="longitude" value="">
+                <input type="hidden" name="latitude" id="latitude" value="">
+                <input type="hidden" name="locStatus" value="2">
+                <input type="hidden" name="action" value="insert">
+                <input type="hidden" name="forwardWhere" value="front-end">
+                <button class="btn trip-btn mt-3 border-dark" type="button" onclick="codeAddress(this)">建立</button>
               </form>
               <!-- custom location end -->
 

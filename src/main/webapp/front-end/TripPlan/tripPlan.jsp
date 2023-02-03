@@ -21,6 +21,7 @@
 <%
 // 先接userId UsersVO usersVO = (UsersVO) session.getAttribute("usersVO");
 	Integer userId = 1;//這邊先將userId寫死
+	session.setAttribute("userId", userId);
 	
 // 	String tripId = request.getParameter("TRIP_ID");
 	Integer tripId = 2;//這邊先將tripId寫死
@@ -140,7 +141,12 @@
         <div class="row my-2">
           <form action="tripLoc.do" method="post" class="col-10 d-flex align-items-center bg-cblue custom-loc" onclick="$(this).submit()">
             <div class="col-3">
+            <c:if test="${LocationPicService().getLocPic(tripDetail.locId).size() != 0}">
               <img src="data:image/png;base64,${Base64.getEncoder().encodeToString(LocationPicService().getLocPic(tripDetail.locId).get(0).getLocPic())}" class="w-100">
+            </c:if>
+            <c:if test="${LocationPicService().getLocPic(tripDetail.locId).size() == 0}">
+            	<p class="text-center m-0 text-white bg-secondary">查無圖片</p>
+            </c:if>
             </div>
             <div class="col-8 px-2 text-start">
               <p class="m-1">${SimpleDateFormat("HH:mm").format(tripDetail.arrivalTime)} - ${SimpleDateFormat("HH:mm").format(tripDetail.leaveTime)}</p>
@@ -261,17 +267,25 @@
           <button class="ms-auto btn trip-btn" id="close-search"><i class="bi bi-x-lg"></i></button>
         </div>
         <c:forEach var="locVO" items="${searchList}">
-          <a href="#loc-info" class="d-flex align-items-center bg-cblue my-2 custom-loc p-2"
-            data-bs-toggle="collapse">
-            <div class="col-3">
-              <img src="data:image/png;base64,${Base64.getEncoder().encodeToString(LocationPicService().getLocPic(locVO.locId).get(0).getLocPic())}" class="w-100">
+          <a href="tripLoc.do?LOC_ID=${locVO.locId}&TRIP_ID=${tripVO.tripId}&DATE=${tripVO.startDate}&action=getOneLoc" class="d-flex align-items-center bg-cblue my-2 custom-loc p-2">
+            <div class="col-3" style="height: 50px">
+            <c:if test="${LocationPicService().getLocPic(locVO.locId).size() != 0}">
+              <img src="data:image/png;base64,${Base64.getEncoder().encodeToString(LocationPicService().getLocPic(locVO.locId).get(0).getLocPic())}" class="w-100 h-100">
+            </c:if>
+            <c:if test="${LocationPicService().getLocPic(locVO.locId).size() == 0}">
+            	<p class="text-center m-0 h-100 text-white bg-secondary" style="line-height: 50px">查無圖片</p>
+            </c:if>
             </div>
             <div class="col-8 px-2">
               <p class="m-1 text-truncate">${locVO.locName}</p>
               <p class="m-1 text-truncate">${locVO.locAddress }</p>
             </div>
           </a>
-        </c:forEach> 
+        </c:forEach>
+        <c:if test="${searchList.isEmpty()}">
+        	<h5>搜尋項目 : <font color="red">${searchWord}</font></h5>
+			<h5>查無資料</h5>
+        </c:if> 
       </div>
       <script>$('#search-content').css('display','block')</script>
      </c:if>
@@ -327,9 +341,11 @@
   <div id="map"></div>
 
 
+  <script>const tripId = <%=tripId%></script>
   <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
     integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
   <script src="<%=request.getContextPath() %>/front-end/js/map.js"></script>
-  
+  <script async src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initMap"></script>
+  <script src="<%=request.getContextPath()%>/front-end/js/geocoding.js"></script>
   
 <%@ include file="../headAndFoot/footer.jsp" %>

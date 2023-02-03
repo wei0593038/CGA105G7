@@ -11,4 +11,5 @@ public interface TripDetailDAO_interface {
 	public TripDetailVO findByPrimaryKey(Integer tripDetailId);
 	public List<TripDetailVO> getAll();
 	public List<TripDetailVO> getAll_ForTRIP(Integer tripId,Date date);
+	public List<TripDetailVO> getAll_ForTripId(Integer tripId);
 }

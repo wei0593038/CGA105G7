@@ -51,4 +51,8 @@ public class TripDetailService {
 	public void deleteByDate(Integer tripId, Date date) {
 		dao.deleteByDate(tripId, date);
 	}
+
+	public List<TripDetailVO> ajaxGetTripDetail(Integer tripId){
+		return dao.getAll_ForTripId(tripId);
+	}
 }

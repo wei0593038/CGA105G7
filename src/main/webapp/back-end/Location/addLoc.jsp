@@ -92,7 +92,7 @@
 
 			</div>
 			<input type="hidden" name="action" value="insert">
-			<input type="hidden" name="userId" value="0">
+			<input type="hidden" name="locStatus" value="0">			
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary"
 					data-bs-dismiss="modal">取消</button>

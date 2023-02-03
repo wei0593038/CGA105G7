@@ -22,12 +22,12 @@ public class LocationJDBCDAO implements LocationDAO_interface {
 	String userid = "root";
 	String passwd = "King297145";
 
-	private static final String INSERT_STMT = "INSERT INTO location (USER_ID,LOC_NAME,LONGITUDE,LATITUDE,LOC_ADDRESS,LOC_PHONE) VALUES (?,?,?,?,?,?)";
+	private static final String INSERT_STMT = "INSERT INTO location (USER_ID,LOC_NAME,LONGITUDE,LATITUDE,LOC_ADDRESS,LOC_PHONE,LOC_STATUS) VALUES (?,?,?,?,?,?,?)";
 	private static final String UPDATE = "UPDATE location set USER_ID=?, LOC_NAME=?, LONGITUDE=?, LATITUDE=?, LOC_ADDRESS=?,LOC_PHONE=?,LOC_STATUS=? where LOC_ID = ?";
 	private static final String DELETE = "DELETE FROM location where LOC_ID = ?";
 	private static final String GET_ONE_STMT = "SELECT LOC_ID,USER_ID,LOC_NAME,LONGITUDE,LATITUDE,LOC_ADDRESS,LOC_PHONE,LOC_STATUS FROM location where LOC_ID = ?";
 	private static final String GET_ALL_STMT = "SELECT LOC_ID,USER_ID,LOC_NAME,LONGITUDE,LATITUDE,LOC_ADDRESS,LOC_PHONE,LOC_STATUS FROM location where LOC_STATUS != 2 order by LOC_ID desc";
-	private static final String GET_GROUP ="SELECT LOC_ID,USER_ID,LOC_NAME,LONGITUDE,LATITUDE,LOC_ADDRESS,LOC_PHONE,LOC_STATUS FROM location WHERE concat(LOC_NAME,LOC_ADDRESS,LOC_PHONE) like ?";
+	private static final String GET_GROUP ="SELECT LOC_ID,USER_ID,LOC_NAME,LONGITUDE,LATITUDE,LOC_ADDRESS,LOC_PHONE,LOC_STATUS FROM location WHERE concat(LOC_NAME,LOC_ADDRESS,LOC_PHONE) like ? and LOC_STATUS in(?,?)";
 	private static final String GET_FK_USERID = "SELECT LOC_ID,USER_ID,LOC_NAME,LONGITUDE,LATITUDE,LOC_ADDRESS,LOC_PHONE,LOC_STATUS FROM location WHERE USER_ID=?";
 
 	@Override
@@ -46,6 +46,7 @@ public class LocationJDBCDAO implements LocationDAO_interface {
 			pstmt.setString(4, locationVO.getLatitude());
 			pstmt.setString(5, locationVO.getLocAddress());
 			pstmt.setString(6, locationVO.getLocPhone());
+			pstmt.setInt(7, locationVO.getLocStatus());
 			pstmt.executeUpdate();
 			// Handle any driver errors
 		} catch (ClassNotFoundException e) {
@@ -73,9 +74,10 @@ public class LocationJDBCDAO implements LocationDAO_interface {
 	}
 
 	@Override
-	public void insertHasPic(LocationVO locationVO, Collection<Part> locPic) {
+	public String insertHasPic(LocationVO locationVO, Collection<Part> locPic) {
 		Connection con = null;
 		PreparedStatement pstmt = null;
+		String nextLocID = null;
 
 		try {
 			Class.forName(driver);
@@ -84,16 +86,16 @@ public class LocationJDBCDAO implements LocationDAO_interface {
 			con.setAutoCommit(false);
 			String cols[] = { "LOC_ID" };
 			pstmt = con.prepareStatement(INSERT_STMT, cols);
-			pstmt.setInt(1, locationVO.getUserId());
+			pstmt.setObject(1, locationVO.getUserId());
 			pstmt.setString(2, locationVO.getLocName());
 			pstmt.setString(3, locationVO.getLongitude());
 			pstmt.setString(4, locationVO.getLatitude());
 			pstmt.setString(5, locationVO.getLocAddress());
 			pstmt.setString(6, locationVO.getLocPhone());
+			pstmt.setInt(7, locationVO.getLocStatus());
 			pstmt.executeUpdate();
 
 			// 得到對應的自增PK
-			String nextLocID = null;
 			ResultSet rs = pstmt.getGeneratedKeys();
 			if (rs.next()) {
 				nextLocID = rs.getString(1);
@@ -158,7 +160,7 @@ public class LocationJDBCDAO implements LocationDAO_interface {
 				}
 			}
 		}
-
+		return nextLocID;
 	}
 
 	@Override
@@ -372,7 +374,7 @@ public class LocationJDBCDAO implements LocationDAO_interface {
 	}
 	
 	@Override
-	public List<LocationVO> getGroup(String address){
+	public List<LocationVO> getGroup(String searchWord, Integer... locStatus){
 		List<LocationVO> list = new ArrayList<LocationVO>();
 		LocationVO locationVO = null;
 
@@ -385,7 +387,14 @@ public class LocationJDBCDAO implements LocationDAO_interface {
 			Class.forName(driver);
 			con = DriverManager.getConnection(url, userid, passwd);
 			pstmt = con.prepareStatement(GET_GROUP);
-			pstmt.setString(1, "%"+address+"%");
+			pstmt.setString(1, "%"+searchWord+"%");
+			pstmt.setInt(2, locStatus[0]);
+			if (locStatus.length == 1) {
+				pstmt.setObject(3, null);
+			}else {
+				pstmt.setInt(3, locStatus[1]);				
+			}
+			
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {
