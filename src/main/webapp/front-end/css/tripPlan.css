@@ -52,7 +52,7 @@ body {
 }
 
 .delete-tripDate{
-  color: red;
+  color: gray;
   font-size: 12px;
   border: 0;
   background-color: rgba(0, 0, 0, 0);
@@ -63,15 +63,23 @@ body {
   height: 100%;
 }
 
+.delete-tripDate:hover{
+	color:red;
+}
+
 .delete-tripLoc{
   border: 0;
-  color: red;
+  color: gray;
   background-color:#7db2e4 ;
 }
 
 .delete-tripLoc:hover{
-  color: white;
-  background-color: red;
+  color: red;
+  background-color: #7db2e4;
+}
+
+.custom-loc{
+	border-radius:5px 0 0 5px;	
 }
 
 .custom-loc:hover{
@@ -82,13 +90,14 @@ body {
 
 .delete-cusLoc{
   border: 0;
-  padding: 0;
   color: gray;
-  background-color: rgba(0, 0, 0, 0);
+  background-color:#7db2e4 ;
+  border-radius:0 5px 5px 0;	
 }
 
 .delete-cusLoc:hover{
   color: red;
+  background-color:#7db2e4 ;
 }
 
 .trip-btn {
@@ -271,4 +280,8 @@ button.active {
   z-index: 15;
   height: calc(100% - 66px);
   display: none;
+}
+
+.leaflet-popup-content{
+	text-align: center;
 }

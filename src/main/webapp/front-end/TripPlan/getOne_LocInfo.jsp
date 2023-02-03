@@ -98,11 +98,11 @@
                         <div class="modal-body">
                           <div class="text-center m-2">
                             <label for="">預計到達時間 : </label>
-                            <input type="text" name="arrivalTime">
+                            <input type="text" name="arrivalTime" id="arrivalTime">
                           </div>
                           <div class="text-center m-2">
                             <label for="">預計離開時間 : </label>
-                            <input type="text" name="leaveTime">
+                            <input type="text" name="leaveTime" id="leaveTime">
                           </div>
                           <div class="text-center m-2">
                             <label for="">預計停留時間 : </label>
@@ -152,24 +152,24 @@
               </form>
               <!-- custom location end -->
 
+             <h4 class="fw-bold mt-3 p-0">我的自訂地點</h4>
               <div class="row">
-                <h4 class="fw-bold mt-3 p-0">我的自訂地點</h4>
                 <!--customLocation btn start -->
                 <c:forEach var="locVO" items="${loclist}">
-                <a href="tripLoc.do?LOC_ID=${locVO.locId}&TRIP_ID=${tripVO.tripId}&DATE=${tripVO.startDate}&action=getOneLoc" class="custom-loc btn trip-btn col-12 d-flex align-items-center bg-cblue my-2 p-0">
-                  <div class="col-3">
+                <a href="tripLoc.do?LOC_ID=${locVO.locId}&TRIP_ID=${tripVO.tripId}&DATE=${tripVO.startDate}&action=getOneLoc" class="custom-loc trip-btn col-10 d-flex align-items-center bg-cblue my-2 p-0">
+                  <div class="col-3 text-center">
                     <i class="bi bi-geo-alt-fill fa-2x"></i>
                   </div>
                   <div class="col-7 px-2">
                     <p class="text-start text-truncate m-1">${locVO.locName}</p>
                     <p class="text-start text-truncate m-1">${locVO.locAddress}</p>
                   </div>
-                  <form action="tripLoc.do" method="post" class="col-2">
-                    <button class="delete-cusLoc" title="刪除我的地點"><i class="bi bi-trash3-fill fa-2x"></i></button>
-                    <input type="hidden" name="action" value="deleteUserLoc">
-                    <input type="hidden" name="LOC_ID" value="${locVO.locId}">
-                  </form>
                 </a>
+                <form action="tripLoc.do" method="post" class="col-2 p-0 my-2 text-center">
+                  <button type="button" class="h-100 w-100 delete-cusLoc" title="刪除我的地點" onclick=" deleteCusLoc(this)"><i class="bi bi-trash3-fill fa-2x"></i></button>
+                  <input type="hidden" name="action" value="deleteUserLoc">
+                  <input type="hidden" name="LOC_ID" value="${locVO.locId}">
+                </form>
                 </c:forEach>
                 <!--customLocation btn end -->
               </div>

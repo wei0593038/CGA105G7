@@ -102,8 +102,7 @@ $("#dateLeft").click(function() {
     $('#search-content').css('display','none');
   });
   
-  //dateTimePicker
-
+  //dateTimePicker update tripDate
 $.datetimepicker.setLocale('zh'); // kr ko ja en
 $(function(){
 	let today = new Date();
@@ -129,11 +128,132 @@ $(function(){
 	 });
 });
 
+// dateTimePicker insert LocTime
+$.datetimepicker.setLocale('zh'); // kr ko ja en
+$(function(){
+	let today = new Date();
+	 $('#arrivalTime').datetimepicker({
+	  format:'Y-m-d H:i',
+	  onShow:function(){
+	   this.setOptions({
+		minDate: today,
+	    maxDate:$('#leaveTime').val()?$('#leaveTime').val():false
+	   })
+	  },
+	  timepicker:true,
+	  step:10//一分鐘
+	 });
+	 
+	 $('#leaveTime').datetimepicker({
+	  format:'Y-m-d H:i',
+	  onShow:function(){
+	   this.setOptions({
+	    minDate:$('#arrivalTime').val()?$('#arrivalTime').val():today
+	   })
+	  },
+	  timepicker:true,
+	  step:1//一分鐘
+	 });
+});
+
 //tripDate active
 $('#tripDate-1').addClass('active');
 
 function focusDate(e){
 	$('.Date-form button:first-child.active').removeClass('active');
 	$(e).addClass('active');
+}
+
+//Delete dateLocation
+function deleteDateLoc(e){
+  swal({
+    title: "確定刪除當天行程地點?",
+    text: "刪除後將無法復原!!",
+    icon: "warning",
+    buttons: {
+      cancel: {
+        text: "取消",
+        visible: true
+      },
+      confirm: {
+        text: "確定",
+        value: true,
+        visible: true,
+        className: "",
+        closeModal: false
+      },
+    },
+    dangerMode: true,
+  }).then((willDelete) => {
+    if (willDelete) {
+      swal("成功刪除", {
+        icon: "success",
+      }).then(()=>{
+        e.closest('form').submit();
+      });
+    }
+  });
+}
+
+//Delete One TripLocation
+function deletOneLoc(e){
+	  swal({
+    title: "確定刪除行程景點?",
+    text: "刪除後將無法復原!!",
+    icon: "warning",
+    buttons: {
+      cancel: {
+        text: "取消",
+        visible: true
+      },
+      confirm: {
+        text: "確定",
+        value: true,
+        visible: true,
+        className: "",
+        closeModal: false
+      },
+    },
+    dangerMode: true,
+  }).then((willDelete) => {
+    if (willDelete) {
+      swal("成功刪除", {
+        icon: "success",
+      }).then(()=>{
+        e.closest('form').submit();
+      });
+    }
+  });
+}
+
+//Delete customized Location
+function deleteCusLoc(e){
+	  swal({
+    title: "確定刪除自訂景點?",
+    text: "刪除後將無法復原!!",
+    icon: "warning",
+    buttons: {
+      cancel: {
+        text: "取消",
+        visible: true
+      },
+      confirm: {
+        text: "確定",
+        value: true,
+        visible: true,
+        className: "",
+        closeModal: false
+      },
+    },
+    dangerMode: true,
+  }).then((willDelete) => {
+    if (willDelete) {
+      swal("成功刪除", {
+        icon: "success",
+      }).then(()=>{
+        e.closest('form').submit();
+      });
+    }
+  });
 }
 

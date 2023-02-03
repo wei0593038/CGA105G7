@@ -98,7 +98,7 @@
               	<input class="form-control trip-in" type="text" id="updateStartDate" value="${tripVO.startDate}" name="startDate">
               	<span><i class="bi bi-arrow-right-circle-fill fa-2x cblue"></i></span>
               	<input class="form-control trip-in" type="text" id="updateEndDate" value="${tripVO.endDate}" name="endDate">
-              	<button class="btn btn-primary" type="submit" title="送出"><i class="bi bi-check-circle-fill"></i></button>
+              	<button class="btn btn-primary py-1" type="submit" title="送出"><i class="bi bi-check-circle-fill"></i></button>
               	<input type="hidden" name="action" value="update">
               	<input type="hidden" name="tripId" value="${tripVO.tripId}">
               	<input type="hidden" name="tripName" value="${tripVO.tripName}">
@@ -126,7 +126,7 @@
            	<button class="date-btn" id="tripDate-<%=count%>" onclick="focusDate(this)"><%=new SimpleDateFormat("MM/dd").format(totalDate)%></button>
            </a>
            <form action="tripDetail.do" method="post">
-            <button class="p-0 delete-tripDate" title="刪除當天行程"><i class="bi bi-trash3-fill"></i></button>
+            <button type="button" class="p-0 delete-tripDate" title="刪除當天行程" onclick="deleteDateLoc(this)"><i class="bi bi-trash3-fill"></i></button>
             <input type="hidden" name="action" value="delete_Date">
             <input type="hidden" name="TRIP_ID" value="${tripVO.tripId}">
             <input type="hidden" name="DATE" value="<%=totalDate%>">
@@ -139,10 +139,10 @@
 
 	<c:forEach var="tripDetail" items="${activeList == null ? list : activeList}">
         <div class="row my-2">
-          <form action="tripLoc.do" method="post" class="col-10 d-flex align-items-center bg-cblue custom-loc" onclick="$(this).submit()">
-            <div class="col-3">
+          <form action="tripLoc.do" method="post" style="height:60px " class="col-10 d-flex align-items-center bg-cblue custom-loc" onclick="$(this).submit()">
+            <div class="col-4 h-100">
             <c:if test="${LocationPicService().getLocPic(tripDetail.locId).size() != 0}">
-              <img src="data:image/png;base64,${Base64.getEncoder().encodeToString(LocationPicService().getLocPic(tripDetail.locId).get(0).getLocPic())}" class="w-100">
+              <img src="data:image/png;base64,${Base64.getEncoder().encodeToString(LocationPicService().getLocPic(tripDetail.locId).get(0).getLocPic())}" class="w-100 h-100">
             </c:if>
             <c:if test="${LocationPicService().getLocPic(tripDetail.locId).size() == 0}">
             	<p class="text-center m-0 text-white bg-secondary">查無圖片</p>
@@ -159,7 +159,9 @@
             <input type="hidden" name="QueryStr" value="<%=request.getQueryString()%>">
           </form>
           <form class="col-2 text-center p-0" action="tripDetail.do" method="post">
-            <button type="submit" class="h-100 w-100 border-0 delete-tripLoc"><i class="bi bi-trash3-fill fa-2x m-auto"></i></button>
+            <button type="button" class="h-100 w-100 border-0 delete-tripLoc" title="刪除景點" onclick="deletOneLoc(this)">
+            	<i class="bi bi-trash3-fill fa-2x m-auto"></i>
+            </button>
             <input type="hidden" name="action" value="deleteTripLoc">
             <input type="hidden" name="TRIP_DETAIL_ID" value="${tripDetail.tripDatailId}">
           </form>
@@ -344,6 +346,7 @@
   <script>const tripId = <%=tripId%></script>
   <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
     integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+  <script src="<%=request.getContextPath() %>/front-end/LeafletMarkers/js/leaflet.extra-markers.min.js"></script>
   <script src="<%=request.getContextPath() %>/front-end/js/map.js"></script>
   <script async src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initMap"></script>
   <script src="<%=request.getContextPath()%>/front-end/js/geocoding.js"></script>
