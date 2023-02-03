@@ -32,10 +32,10 @@
 	pageContext.setAttribute("tripVO", tripVO);
 	
 // get tripDetail info
-	TripDetailService tripDetailSvc = new TripDetailService();
-	Date date = tripVO.getStartDate();
-	List<TripDetailVO> list = tripDetailSvc.getTrip_TripDetail(tripId, date);
-	pageContext.setAttribute("list", list);
+// 	TripDetailService tripDetailSvc = new TripDetailService();
+// 	Date date = tripVO.getStartDate();
+// 	List<TripDetailVO> list = tripDetailSvc.getTrip_TripDetail(tripId, date);
+// 	pageContext.setAttribute("list", list);
 	
 // get location info
 	LocationVO locVO = (LocationVO)request.getAttribute("locVO");
@@ -70,7 +70,7 @@
     <div class="row">
 
       <!-- right start -->
-      <div class="col-3 overflow-auto scroll-style" style="height: calc(100vh - 66px);">
+      <div class="col-3 overflow-auto scroll-style" id="rightContent" style="height: calc(100vh - 66px);">
         <div class="row align-items-center p-0" style="background-color: rgba(38, 112, 180, 0.2); height: 10%;">
           <div class="col-2">
             <button class="btn"><i class="bi bi-arrow-left"></i></button>
@@ -122,51 +122,51 @@
               count++;
            %>
            <div class="p-0 position-relative Date-form" style="width: 75px;">
-           <a href="tripDetail.do?TRIP_ID=<%=tripId%>&DATE=<%=totalDate%>&action=getTrip_TripDetail" class="d-block">
-           	<button class="date-btn" id="tripDate-<%=count%>" onclick="focusDate(this)"><%=new SimpleDateFormat("MM/dd").format(totalDate)%></button>
-           </a>
-           <form action="tripDetail.do" method="post">
+           <div class="d-block">
+           	<button class="date-btn getTrip_TripDetail" type="button" id="tripDate-<%=count%>" onclick="focusDate(this);getTripDetailAjax('<%=totalDate%>')"><%=new SimpleDateFormat("MM/dd").format(totalDate)%></button>
+           </div>
+<!--            <form action="tripDetail.do" method="post"> -->
             <button type="button" class="p-0 delete-tripDate" title="刪除當天行程" onclick="deleteDateLoc(this)"><i class="bi bi-trash3-fill"></i></button>
             <input type="hidden" name="action" value="delete_Date">
             <input type="hidden" name="TRIP_ID" value="${tripVO.tripId}">
             <input type="hidden" name="DATE" value="<%=totalDate%>">
-           </form>
+<!--            </form> -->
            </div>
           <%}%>
           
           <button id="dateRight"><i class="bi bi-arrow-right"></i></button>
         </div>
 
-	<c:forEach var="tripDetail" items="${activeList == null ? list : activeList}">
-        <div class="row my-2">
-          <form action="tripLoc.do" method="post" style="height:60px " class="col-10 d-flex align-items-center bg-cblue custom-loc" onclick="$(this).submit()">
-            <div class="col-4 h-100">
-            <c:if test="${LocationPicService().getLocPic(tripDetail.locId).size() != 0}">
-              <img src="data:image/png;base64,${Base64.getEncoder().encodeToString(LocationPicService().getLocPic(tripDetail.locId).get(0).getLocPic())}" class="w-100 h-100">
-            </c:if>
-            <c:if test="${LocationPicService().getLocPic(tripDetail.locId).size() == 0}">
-            	<p class="text-center m-0 text-white bg-secondary">查無圖片</p>
-            </c:if>
-            </div>
-            <div class="col-8 px-2 text-start">
-              <p class="m-1">${SimpleDateFormat("HH:mm").format(tripDetail.arrivalTime)} - ${SimpleDateFormat("HH:mm").format(tripDetail.leaveTime)}</p>
-              <p class="m-1 text-truncate">${LocationService().getOneLoc(tripDetail.locId).getLocName()}</p>
-            </div>
-            <input type="hidden" name="LOC_ID" value="${tripDetail.locId}">
-            <input type="hidden" name="TRIP_ID" value="${tripVO.tripId}">
-            <input type="hidden" name="DATE" value="${tripVO.startDate}">
-            <input type="hidden" name="action" value="getOneLoc">
-            <input type="hidden" name="QueryStr" value="<%=request.getQueryString()%>">
-          </form>
-          <form class="col-2 text-center p-0" action="tripDetail.do" method="post">
-            <button type="button" class="h-100 w-100 border-0 delete-tripLoc" title="刪除景點" onclick="deletOneLoc(this)">
-            	<i class="bi bi-trash3-fill fa-2x m-auto"></i>
-            </button>
-            <input type="hidden" name="action" value="deleteTripLoc">
-            <input type="hidden" name="TRIP_DETAIL_ID" value="${tripDetail.tripDatailId}">
-          </form>
-        </div>
-	</c:forEach>
+<%-- 	<c:forEach var="tripDetail" items="${activeList == null ? list : activeList}"> --%>
+<!--         <div class="row my-2"> -->
+<!--           <form action="tripLoc.do" method="post" style="height:60px " class="col-10 d-flex align-items-center bg-cblue custom-loc" onclick="$(this).submit()"> -->
+<!--             <div class="col-4 h-100"> -->
+<%--             <c:if test="${LocationPicService().getLocPic(tripDetail.locId).size() != 0}"> --%>
+<%--               <img src="data:image/png;base64,${Base64.getEncoder().encodeToString(LocationPicService().getLocPic(tripDetail.locId).get(0).getLocPic())}" class="w-100 h-100"> --%>
+<%--             </c:if> --%>
+<%--             <c:if test="${LocationPicService().getLocPic(tripDetail.locId).size() == 0}"> --%>
+<!--             	<p class="text-center m-0 text-white bg-secondary">查無圖片</p> -->
+<%--             </c:if> --%>
+<!--             </div> -->
+<!--             <div class="col-8 px-2 text-start"> -->
+<%--               <p class="m-1">${SimpleDateFormat("HH:mm").format(tripDetail.arrivalTime)} - ${SimpleDateFormat("HH:mm").format(tripDetail.leaveTime)}</p> --%>
+<%--               <p class="m-1 text-truncate">${LocationService().getOneLoc(tripDetail.locId).getLocName()}</p> --%>
+<!--             </div> -->
+<%--             <input type="hidden" name="LOC_ID" value="${tripDetail.locId}"> --%>
+<%--             <input type="hidden" name="TRIP_ID" value="${tripVO.tripId}"> --%>
+<%--             <input type="hidden" name="DATE" value="${tripVO.startDate}"> --%>
+<!--             <input type="hidden" name="action" value="getOneLoc"> -->
+<%--             <input type="hidden" name="QueryStr" value="<%=request.getQueryString()%>"> --%>
+<!--           </form> -->
+<!--           <form class="col-2 text-center p-0" action="tripDetail.do" method="post"> -->
+<!--             <button type="button" class="h-100 w-100 border-0 delete-tripLoc" title="刪除景點" onclick="deletOneLoc(this)"> -->
+<!--             	<i class="bi bi-trash3-fill fa-2x m-auto"></i> -->
+<!--             </button> -->
+<!--             <input type="hidden" name="action" value="deleteTripLoc"> -->
+<%--             <input type="hidden" name="TRIP_DETAIL_ID" value="${tripDetail.tripDatailId}"> --%>
+<!--           </form> -->
+<!--         </div> -->
+<%-- 	</c:forEach> --%>
       </div>
       <!-- right end -->
 
@@ -343,12 +343,18 @@
   <div id="map"></div>
 
 
-  <script>const tripId = <%=tripId%></script>
+  <script>
+  	const tripId = <%=tripId%>;
+  	const startDate = '<%=tripVO.getStartDate()%>';
+  	const endDate = '<%=tripVO.getEndDate()%>';
+  	const path ='<%=request.getContextPath()%>';
+  </script>
   <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
     integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
   <script src="<%=request.getContextPath() %>/front-end/LeafletMarkers/js/leaflet.extra-markers.min.js"></script>
   <script src="<%=request.getContextPath() %>/front-end/js/map.js"></script>
   <script async src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initMap"></script>
   <script src="<%=request.getContextPath()%>/front-end/js/geocoding.js"></script>
+  <script src="<%=request.getContextPath()%>/front-end/js/tripPlanAjax.js"></script>
   
 <%@ include file="../headAndFoot/footer.jsp" %>

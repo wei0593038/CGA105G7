@@ -190,7 +190,7 @@ public class LocationServlet extends HttpServlet {
 			 	
 			 	locList.add(locVO);
 			}
-			//搜尋完成，轉送資料
+			//搜尋完成，轉送給JS
 			Gson gson = new Gson();
 			String jsonStr = "";
 			jsonStr = gson.toJson(locList);

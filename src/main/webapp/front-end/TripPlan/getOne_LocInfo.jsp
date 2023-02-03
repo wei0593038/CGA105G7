@@ -85,16 +85,16 @@
 
               <div class="row justify-content-center">
                 <button class="col-8 btn trip-btn fw-bold border-dark" data-bs-toggle="modal"
-                  data-bs-target="#exampleModal">加入行程</button>
-                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                  data-bs-target="#addtripLocModal">加入行程</button>
+                <div class="modal fade" id="addtripLocModal" tabindex="-1" aria-labelledby="addtripLocModalLabel"
                   aria-hidden="true">
                   <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                       <div class="modal-header">
-                        <h5 class="modal-title fw-bold" id="exampleModalLabel">加入行程</h5>
+                        <h5 class="modal-title fw-bold" id="addtripLocModalLabel">加入行程</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                       </div>
-                      <form action="tripDetail.do" method="post">
+<!--                       <form action="tripDetail.do" method="post"> -->
                         <div class="modal-body">
                           <div class="text-center m-2">
                             <label for="">預計到達時間 : </label>
@@ -112,12 +112,12 @@
                         </div>
                         <input type="hidden" name="action" value="addTripLoc">
                         <input type="hidden" name="TRIP_ID" value="${tripVO.tripId}">
-                        <input type="hidden" name="LOC_ID" value="${locVO.locId}">
+                        <input type="hidden" name="LOC_ID" id="addTripDetailLocId" value="${locVO.locId}">
                         <div class="modal-footer">
                           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                          <button type="submit" class="btn btn-primary">確定</button>
+                          <button type="button" class="btn btn-primary" id="addTripLoc">確定</button>
                         </div>
-                      </form>
+<!--                       </form> -->
                     </div>
                   </div>
                 </div>

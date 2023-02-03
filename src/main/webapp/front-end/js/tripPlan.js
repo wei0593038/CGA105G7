@@ -131,28 +131,28 @@ $(function(){
 // dateTimePicker insert LocTime
 $.datetimepicker.setLocale('zh'); // kr ko ja en
 $(function(){
-	let today = new Date();
 	 $('#arrivalTime').datetimepicker({
 	  format:'Y-m-d H:i',
 	  onShow:function(){
 	   this.setOptions({
-		minDate: today,
-	    maxDate:$('#leaveTime').val()?$('#leaveTime').val():false
+		minDate: startDate,
+	    maxDate:$('#leaveTime').val()?$('#leaveTime').val():endDate
 	   })
 	  },
 	  timepicker:true,
-	  step:10//一分鐘
+	  step:10
 	 });
 	 
 	 $('#leaveTime').datetimepicker({
 	  format:'Y-m-d H:i',
 	  onShow:function(){
 	   this.setOptions({
-	    minDate:$('#arrivalTime').val()?$('#arrivalTime').val():today
+	    minDate:$('#arrivalTime').val()?$('#arrivalTime').val():startDate,
+	    maxDate:endDate
 	   })
 	  },
 	  timepicker:true,
-	  step:1//一分鐘
+	  step:10
 	 });
 });
 

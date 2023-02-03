@@ -44,7 +44,7 @@ public class TripDetailService {
 		return dao.getAll();
 	}
 	
-	public List<TripDetailVO> getTrip_TripDetail(Integer tripId,Date date){
+	public List<Object> getTrip_TripDetail(Integer tripId,Date date){
 		return dao.getAll_ForTRIP(tripId, date);
 	}
 
