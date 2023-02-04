@@ -31,11 +31,10 @@ public class TripDetailJDBCDAO implements TripDetailDAO_interface{
 	private static final String GET_ALL_STMT = 
 			"SELECT TRIP_DETAIL_ID,TRIP_ID,LOC_ID,ARRIVAL_TIME,LEAVE_TIME FROM trip_detail order by TRIP_DETAIL_ID";
 	private static final String GET_ALL_FORTRIP = 
-			"SELECT td.TRIP_DETAIL_ID, td.TRIP_ID, td.LOC_ID, td.ARRIVAL_TIME, td.LEAVE_TIME, loc.USER_ID, loc.LOC_NAME, loc.LONGITUDE, loc.LATITUDE, loc.LOC_ADDRESS, loc.LOC_PHONE, loc.LOC_STATUS, locP.LOC_PIC_ID, MIN(locP.LOC_PIC_ID) AS LOC_PIC "
-			+"FROM trip_detail td INNER JOIN location loc ON td.LOC_ID = loc.LOC_ID INNER JOIN location_pic locP ON td.LOC_ID = locP.LOC_ID "
-					+"WHERE td.TRIP_ID=? AND DATE(ARRIVAL_TIME)=? GROUP BY td.LOC_ID;";
+			"SELECT TRIP_DETAIL_ID,TRIP_ID,LOC_ID,ARRIVAL_TIME,LEAVE_TIME FROM trip_detail WHERE TRIP_ID=? AND DATE(ARRIVAL_TIME)=?";
 	private static final String GET_ALL_TRIPID=
-			"SELECT TRIP_DETAIL_ID,TRIP_ID,LOC_ID,ARRIVAL_TIME,LEAVE_TIME FROM trip_detail WHERE TRIP_ID=?";
+			"SELECT TRIP_DETAIL_ID,TRIP_ID,LOC_ID,ARRIVAL_TIME,LEAVE_TIME "
+			+"FROM trip_detail WHERE TRIP_ID=? AND DATE(ARRIVAL_TIME) BETWEEN ? AND ? ORDER BY ARRIVAL_TIME";
 	
 	@Override
 	public void insert(TripDetailVO tripDetailVO) {
@@ -282,11 +281,9 @@ public class TripDetailJDBCDAO implements TripDetailDAO_interface{
 	}
 	
 	@Override
-	public List<Object> getAll_ForTRIP(Integer tripId,Date date){
-		List<Object> list = new ArrayList<Object>();
+	public List<TripDetailVO> getAll_ForTRIP(Integer tripId,Date date){
+		List<TripDetailVO> list = new ArrayList<TripDetailVO>();
 		TripDetailVO tripDetailVO =null;
-		LocationVO locVO = null;
-		LocationPicVO locPicVO =null;
 
 		Connection con = null;
 		PreparedStatement pstmt = null;
@@ -302,30 +299,14 @@ public class TripDetailJDBCDAO implements TripDetailDAO_interface{
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {
-				// empVO 也稱為 Domain objects
 				tripDetailVO = new TripDetailVO();
-				locVO = new LocationVO();
-				locPicVO = new LocationPicVO();
-				
 				tripDetailVO.setTripDatailId(rs.getInt("TRIP_DETAIL_ID"));
 				tripDetailVO.setTripId(rs.getInt("TRIP_ID"));
 				tripDetailVO.setLocId(rs.getInt("LOC_ID"));
 				tripDetailVO.setArrivalTime(rs.getTimestamp("ARRIVAL_TIME"));
 				tripDetailVO.setLeaveTime(rs.getTimestamp("LEAVE_TIME"));
 				
-				locVO.setUserId(rs.getInt("USER_ID"));
-				locVO.setLocName(rs.getString("LOC_NAME"));
-				locVO.setLongitude(rs.getString("LONGITUDE"));
-				locVO.setLatitude(rs.getString("LATITUDE"));
-				locVO.setLocAddress(rs.getString("LOC_ADDRESS"));
-				locVO.setLocPhone(rs.getString("LOC_PHONE"));
-				locVO.setLocStatus(rs.getInt("LOC_STATUS"));
-				
-				locPicVO.setLocPicId(rs.getInt("LOC_PIC_ID"));
-				locPicVO.setLocPic(rs.getBytes("LOC_PIC"));
-				list.add(tripDetailVO);
-				list.add(locVO);
-				list.add(locPicVO);
+				list.add(tripDetailVO); // Store the row in the list
 			}
 
 			// Handle any driver errors
@@ -409,7 +390,7 @@ public class TripDetailJDBCDAO implements TripDetailDAO_interface{
 	}
 
 	@Override
-	public List<TripDetailVO> getAll_ForTripId(Integer tripId) {
+	public List<TripDetailVO> getAllByForeignKey(Integer tripId,String startDate,String endDate) {
 		List<TripDetailVO> list = new ArrayList<TripDetailVO>();
 		TripDetailVO tripDetailVO =null;
 
@@ -423,6 +404,8 @@ public class TripDetailJDBCDAO implements TripDetailDAO_interface{
 			con = DriverManager.getConnection(url, userid, passwd);
 			pstmt = con.prepareStatement(GET_ALL_TRIPID);
 			pstmt.setInt(1, tripId);
+			pstmt.setString(2, startDate);
+			pstmt.setString(3, endDate);
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {

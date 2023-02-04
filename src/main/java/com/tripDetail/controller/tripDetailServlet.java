@@ -18,7 +18,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.location.model.LocationService;
 import com.location.model.LocationVO;
+import com.locationPic.model.LocationPicService;
 import com.locationPic.model.LocationPicVO;
 import com.tripDetail.model.TripDetailService;
 import com.tripDetail.model.TripDetailVO;
@@ -50,11 +53,14 @@ public class tripDetailServlet extends HttpServlet{
 			//2.開始新增
 			TripDetailService tripDetailSvc = new TripDetailService();
 			TripDetailVO tripDetailVO = tripDetailSvc.addTripDetail(tripId, locId, arrivalTime, leaveTime);
-			req.setAttribute("tripDetailVO", tripDetailVO);
 			
-			//3.完成新增準備轉交
-			String url = "/front-end/TripPlan/tripPlan.jsp";
-			req.getRequestDispatcher(url).forward(req, res);
+			//3.完成新增，轉送給JS
+			Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+			String jsonStr = "";
+			jsonStr = gson.toJson(tripDetailVO);
+			PrintWriter out = res.getWriter();
+			out.print(jsonStr);
+			out.close();
 		}
 		
 		if ("getTrip_TripDetail".equals(action)) {//來自tripPlan.jsp ajax的請求
@@ -64,47 +70,42 @@ public class tripDetailServlet extends HttpServlet{
 			
 			//2.開始搜尋
 			TripDetailService tripDetailSvc = new TripDetailService();
-			List<Object> activeList = tripDetailSvc.getTrip_TripDetail(tripId, date);
+			List<TripDetailVO> activeList = tripDetailSvc.getTrip_TripDetail(tripId, date);
 			List<Object> returnList = new ArrayList<Object>();
-			
-			LinkedHashMap<String, Object> map = new LinkedHashMap<>();
-			List<Object> objList = new ArrayList<Object>();
-			for(Object list : activeList) {
-				
-				if(list instanceof TripDetailVO) {
-					TripDetailVO tripDetailVO = (TripDetailVO)list;
-					SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-					objList.add(tripDetailVO.getTripDatailId());
-					objList.add(tripDetailVO.getTripId());
-					objList.add(tripDetailVO.getLocId());
-					objList.add(format.format(tripDetailVO.getArrivalTime()));
-					objList.add(format.format(tripDetailVO.getLeaveTime()));
-				}else if (list instanceof LocationVO) {
-					LocationVO locVO = (LocationVO)list;
-					objList.add(locVO.getUserId());
-					objList.add(locVO.getLocName());
-					objList.add(locVO.getLongitude());
-					objList.add(locVO.getLatitude());
-					objList.add(locVO.getLocAddress());
-					objList.add(locVO.getLocPhone());
-					objList.add(locVO.getLocStatus());
+			for(int count = 0; count < activeList.size(); count++) {
+				LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+				SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+				map.put("TripDId",activeList.get(count).getTripDatailId());
+				map.put("TripId",activeList.get(count).getTripId());
+				map.put("LocId",activeList.get(count).getLocId());
+				map.put("ArrivalTime",format.format(activeList.get(count).getArrivalTime()));
+				map.put("LeaveTime",format.format(activeList.get(count).getLeaveTime()));
+				//取得地點資訊
+				LocationService locSvc = new LocationService();
+				LocationVO locVO= locSvc.getOneLoc(activeList.get(count).getLocId());
+				map.put("UserId",locVO.getUserId());
+				map.put("LocName",locVO.getLocName());
+				map.put("Long",locVO.getLongitude());
+				map.put("Lat",locVO.getLatitude());
+				map.put("Address",locVO.getLocAddress());
+				map.put("Phone",locVO.getLocPhone());
+				map.put("Status",locVO.getLocStatus());
+				//取得地點圖片
+				LocationPicService locPicSvc = new LocationPicService();
+				List<LocationPicVO> locPicList = locPicSvc.getLocPic(activeList.get(count).getLocId());
+				if (locPicList.size() != 0) {
+					String base64Str = Base64.getEncoder().encodeToString(locPicList.get(0).getLocPic());
+					map.put("locPic",base64Str);
 				}else {
-					LocationPicVO locPicVO = (LocationPicVO)list;
-					objList.add(locPicVO.getLocPicId());
-					objList.add(locPicVO.getLocPic());
-
-					map.put("TripD", objList);
-					returnList.add(map);
-					map = new LinkedHashMap<>();
-					objList = new ArrayList<Object>();
+					map.put("locPic","");
 				}
+				returnList.add(map);
 			}
 			
 			//3.完成搜尋，轉送給JS
 			Gson gson = new Gson();
 			String jsonStr = "";
 			jsonStr = gson.toJson(returnList);
-			System.out.println(jsonStr);
 			PrintWriter out = res.getWriter();
 			out.print(jsonStr);
 			out.close();
@@ -132,9 +133,11 @@ public class tripDetailServlet extends HttpServlet{
 			TripDetailService tripDetailSvc = new TripDetailService();
 			tripDetailSvc.deleteTripDetail(tripDetailId);
 			
-			//3.刪除完成後開始轉交
-			String url = "/front-end/TripPlan/tripPlan.jsp";
-			req.getRequestDispatcher(url).forward(req, res);
+			//3.完成搜尋，轉送給成功刪除訊息給JS
+			String jsonStr = "successfully deleted";
+			PrintWriter out = res.getWriter();
+			out.print(jsonStr);
+			out.close();
 		}
 	}
 

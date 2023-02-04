@@ -3,7 +3,10 @@ package com.location.controller;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collection;
+import java.util.LinkedHashMap;
+
 import com.google.gson.Gson;
 import java.util.List;
 
@@ -14,8 +17,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
+import javax.sound.midi.Soundbank;
+
 import com.location.model.LocationService;
 import com.location.model.LocationVO;
+import com.locationPic.model.LocationPicService;
+import com.locationPic.model.LocationPicVO;
 import com.tripDetail.model.TripDetailService;
 import com.tripDetail.model.TripDetailVO;
 
@@ -136,27 +143,33 @@ public class LocationServlet extends HttpServlet {
 			
 		}
 		
-		if ("getOneLoc".equals(action)) {//來自tripPlan.jsp getOne_LocInfo.jsp的請求
+		if ("getOneLoc".equals(action)) {//來自tripPlan.jsp getOne_LocInfo.jsp的請求ajax
 			//1.接收請求參數
 			Integer locId = Integer.valueOf(req.getParameter("LOC_ID"));
-			String tripId = req.getParameter("TRIP_ID");
-			String date = req.getParameter("DATE");
-			String queryStr = req.getParameter("QueryStr");
 			
 			//2.開始搜尋
+			List<Object> returnList = new ArrayList<>();
+			LinkedHashMap<String, Object> map = new LinkedHashMap<>();
 			LocationService locSvc = new LocationService();
 			LocationVO locVO = locSvc.getOneLoc(locId);
+			returnList.add(locVO);
 			
-			req.setAttribute("locVO", locVO);
+			LocationPicService locPicSvc = new LocationPicService();
+			List<LocationPicVO> locPicList = locPicSvc.getLocPic(locId);
+			for(int count = 0; count < locPicList.size(); count++) {
+				String base64Str = Base64.getEncoder().encodeToString(locPicList.get(count).getLocPic());
+				map.put("LocPic",base64Str);
+				returnList.add(map);
+				map = new LinkedHashMap<>();
+			}
 			
-			//3.搜尋結束開始轉交
-			String url = null;
-			if (queryStr == null) {
-				url = "/front-end/TripPlan/tripDetail.do?TRIP_ID=" + tripId + "&DATE=" + date +"&action=getTrip_TripDetail";
-			}else {
-				url = queryStr.equals("null")?"/front-end/TripPlan/tripDetail.do?TRIP_ID=" + tripId + "&DATE=" + date + "&action=getTrip_TripDetail":"/front-end/TripPlan/tripDetail.do?" + queryStr;
-			}	
-			req.getRequestDispatcher(url).forward(req, res);
+			//3.搜尋結束，傳送給JS
+			Gson gson = new Gson();
+			String jsonStr = "";
+			jsonStr = gson.toJson(returnList);
+			PrintWriter out = res.getWriter();
+			out.print(jsonStr);
+			out.close();
 			
 		}
 		
@@ -176,11 +189,12 @@ public class LocationServlet extends HttpServlet {
 		if ("ajaxGetLocInfo".equals(action)) {//來自map.js的請求 ajax
 			//1.接收請求參數
 			Integer tripId = Integer.valueOf(req.getParameter("tripId"));
-			
+			String startDate = req.getParameter("startDate");
+			String endDate = req.getParameter("endDate");
 			
 			//2.開始搜尋
 			TripDetailService tripDetailSvc = new TripDetailService();
-			List<TripDetailVO> tripDetailList = tripDetailSvc.ajaxGetTripDetail(tripId);
+			List<TripDetailVO> tripDetailList = tripDetailSvc.ajaxGetTripDetail(tripId, startDate, endDate);
 			
 			List<LocationVO> locList = new ArrayList<LocationVO>();
 			for(TripDetailVO tripDetail: tripDetailList) {

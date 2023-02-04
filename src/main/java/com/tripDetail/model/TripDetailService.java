@@ -44,7 +44,7 @@ public class TripDetailService {
 		return dao.getAll();
 	}
 	
-	public List<Object> getTrip_TripDetail(Integer tripId,Date date){
+	public List<TripDetailVO> getTrip_TripDetail(Integer tripId,Date date){
 		return dao.getAll_ForTRIP(tripId, date);
 	}
 
@@ -52,7 +52,7 @@ public class TripDetailService {
 		dao.deleteByDate(tripId, date);
 	}
 
-	public List<TripDetailVO> ajaxGetTripDetail(Integer tripId){
-		return dao.getAll_ForTripId(tripId);
+	public List<TripDetailVO> ajaxGetTripDetail(Integer tripId,String startDate,String endDate){
+		return dao.getAllByForeignKey(tripId, startDate, endDate);
 	}
 }

@@ -14,6 +14,8 @@ import java.util.List;
 
 import javax.servlet.http.Part;
 
+import com.location.model.LocationVO;
+
 public class LocationPicJDBCDAO implements LocationPicDAO_interface{
 	String driver = "com.mysql.cj.jdbc.Driver";
 	String url = "jdbc:mysql://localhost:3306/test01?serverTimezone=Asia/Taipei";
@@ -26,6 +28,8 @@ public class LocationPicJDBCDAO implements LocationPicDAO_interface{
 			"DELETE FROM location_pic where LOC_PIC_ID = ?";
 	private static final String GET_GROUP_STMT = 
 			"SELECT LOC_PIC_ID,LOC_ID,LOC_PIC FROM location_pic where LOC_ID = ?";
+	private static final String GET_ONE_STMT = 
+			"SELECT LOC_PIC_ID,LOC_ID,LOC_PIC FROM location_pic where LOC_PIC_ID = ?";
 	
 	@Override
 	public void insert(LocationPicVO locationPicVO,Collection<Part> locPic) {
@@ -201,6 +205,63 @@ public class LocationPicJDBCDAO implements LocationPicDAO_interface{
 			}
 		}
 		return list;
+	}
+
+	@Override
+	public LocationPicVO findByPrimaryKey(Integer locPicId) {
+		LocationPicVO locationPicVO = null;
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+
+			Class.forName(driver);
+			con = DriverManager.getConnection(url, userid, passwd);
+			pstmt = con.prepareStatement(GET_ONE_STMT);
+
+			pstmt.setInt(1, locPicId);
+
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				locationPicVO = new LocationPicVO();
+				locationPicVO.setLocPicId(rs.getInt("LOC_PIC_ID"));
+				locationPicVO.setLocId(rs.getInt("LOC_ID"));
+				locationPicVO.setLocPic(rs.getBytes("LOC_PIC"));
+			}
+
+			// Handle any driver errors
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Couldn't load database driver. " + e.getMessage());
+			// Handle any SQL errors
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. " + se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+		return locationPicVO;
 	}
 
 }

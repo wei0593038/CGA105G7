@@ -71,6 +71,7 @@ body {
   border: 0;
   color: gray;
   background-color:#7db2e4 ;
+  border-radius:0 10px 10px 0;
 }
 
 .delete-tripLoc:hover{
@@ -79,7 +80,7 @@ body {
 }
 
 .custom-loc{
-	border-radius:5px 0 0 5px;	
+	border-radius:10px 0 0 10px;	
 }
 
 .custom-loc:hover{
@@ -262,6 +263,7 @@ button.active {
 }
 
 #loc-info{
+  display:none;
   z-index: 20;
 }
 

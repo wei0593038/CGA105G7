@@ -30,5 +30,9 @@ public class LocationPicService {
 		locPicVO.setLocId(locId);
 		return dao.findByForeignKey(locId);
 	}
+
+	public LocationPicVO getOnePic(Integer locPicId) {
+		return dao.findByPrimaryKey(locPicId);
+	}
 }
 

@@ -78,6 +78,20 @@ public class LocationPicServlet extends HttpServlet {
 			String url = "/back-end/Location/locPic.do?LOC_ID=" + locId + "&action=get_For_Update";
 			req.getRequestDispatcher(url).forward(req, res);
 		}
+		
+		if("getOnePic".equals(action)) {//來自getOne_LocInfo的請求
+			System.out.println("來拿圖片囉");
+			//1.接收請求參數
+			Integer locPicId = Integer.valueOf(req.getParameter("LocPicId"));
+			
+			//2.搜尋圖片
+			LocationPicService locPicSvc = new LocationPicService();
+			LocationPicVO locPicVO = locPicSvc.getOnePic(locPicId);
+			byte[] locPic = locPicVO.getLocPic();
+			
+			
+			
+		}
 		 
 	}
 

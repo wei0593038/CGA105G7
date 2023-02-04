@@ -9,12 +9,12 @@ $('.custom-loc').click((e) => {
 $('#custom-Loc').click((e) => {
   let locInfo = $('#loc-info');
   //如果地點資訊卡片沒有打開 那就把它開啟
-  if (!locInfo.hasClass('show')) {
-    locInfo.addClass('show');
+  if (locInfo.css('display') === 'none') {
+    locInfo.css('display','block');
     //如果資訊卡都開啟，在看是不再在自訂景點內，如果是就把資訊卡整個關掉
   } else if ($('#cusLoc-tab').hasClass('active') || $('#cusLoc').hasClass('show active')) {
     ;
-    locInfo.removeClass('show');
+    locInfo.css('display','none');
   }
   $('#cusLoc-tab').addClass('active');
   $('#cusLoc').addClass('show active');
@@ -81,7 +81,7 @@ $('#invite').click((e) => {
 
 //close #loc-info
 function closeLocInfo(){
-	$('#loc-info').removeClass('show');
+	$('#loc-info').css('display','none');
 };
 
 //date control
@@ -130,30 +130,32 @@ $(function(){
 
 // dateTimePicker insert LocTime
 $.datetimepicker.setLocale('zh'); // kr ko ja en
-$(function(){
-	 $('#arrivalTime').datetimepicker({
-	  format:'Y-m-d H:i',
-	  onShow:function(){
-	   this.setOptions({
-		minDate: startDate,
-	    maxDate:$('#leaveTime').val()?$('#leaveTime').val():endDate
-	   })
-	  },
-	  timepicker:true,
-	  step:10
-	 });
-	 
-	 $('#leaveTime').datetimepicker({
-	  format:'Y-m-d H:i',
-	  onShow:function(){
-	   this.setOptions({
-	    minDate:$('#arrivalTime').val()?$('#arrivalTime').val():startDate,
-	    maxDate:endDate
-	   })
-	  },
-	  timepicker:true,
-	  step:10
-	 });
+$(document).on('focus', '#arrivalTime', function(){
+  $(this).datetimepicker({
+   format:'Y-m-d H:i',
+   onShow:function(){
+    this.setOptions({
+     minDate: startDate,
+     maxDate:$('#leaveTime').val()?$('#leaveTime').val():endDate
+    })
+   },
+   timepicker:true,
+   step:10
+  });
+});
+
+$(document).on('focus', '#leaveTime', function(){
+  $(this).datetimepicker({
+   format:'Y-m-d H:i',
+   onShow:function(){
+    this.setOptions({
+     minDate:$('#arrivalTime').val()?$('#arrivalTime').val():startDate,
+     maxDate:endDate
+    })
+   },
+   timepicker:true,
+   step:10
+  });
 });
 
 //tripDate active
@@ -196,7 +198,7 @@ function deleteDateLoc(e){
 }
 
 //Delete One TripLocation
-function deletOneLoc(e){
+function deletOneLoc(e,tripDetailId){
 	  swal({
     title: "確定刪除行程景點?",
     text: "刪除後將無法復原!!",
@@ -220,13 +222,13 @@ function deletOneLoc(e){
       swal("成功刪除", {
         icon: "success",
       }).then(()=>{
-        e.closest('form').submit();
+         deleteTripLoc(tripDetailId);
       });
     }
   });
 }
 
-//Delete customized Location
+//Delete customized Location 
 function deleteCusLoc(e){
 	  swal({
     title: "確定刪除自訂景點?",
@@ -257,3 +259,33 @@ function deleteCusLoc(e){
   });
 }
 
+//changeTripDate
+function changeTripDate(e){
+	  swal({
+    title: "確定更改日期?",
+    text: "刪除後將無法復原!!",
+    icon: "warning",
+    buttons: {
+      cancel: {
+        text: "取消",
+        visible: true
+      },
+      confirm: {
+        text: "確定",
+        value: true,
+        visible: true,
+        className: "",
+        closeModal: false
+      },
+    },
+    dangerMode: true,
+  }).then((willDelete) => {
+    if (willDelete) {
+      swal("更改成功!!", {
+        icon: "success",
+      }).then(()=>{
+        e.closest('form').submit();
+      });
+    }
+  });
+}
