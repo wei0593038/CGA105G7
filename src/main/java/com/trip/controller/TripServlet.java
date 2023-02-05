@@ -1,6 +1,7 @@
 package com.trip.controller;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Date;
 import java.util.Base64;
 
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.Gson;
 import com.trip.model.TripService;
 import com.trip.model.TripVO;
 
@@ -26,6 +28,7 @@ public class TripServlet extends HttpServlet{
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		
 		req.setCharacterEncoding("UTF-8");
+		res.setCharacterEncoding("UTF-8");
 		String action = req.getParameter("action");
 		
 		if ("insert".equals(action)) {//來自userTripAll.jsp的請求
@@ -110,6 +113,7 @@ public class TripServlet extends HttpServlet{
 			String tripName = req.getParameter("tripName");
 			byte[] coverPic = Base64.getDecoder().decode(req.getParameter("coverPic"));
 			String note = req.getParameter("note");
+			String method = req.getParameter("method");
 			
 			
 			//2.開始更新資料
@@ -118,10 +122,17 @@ public class TripServlet extends HttpServlet{
 			req.setAttribute("tripVO", tripVO);
 			
 			//3.更新完成準備轉交
-			String url = "/front-end/TripPlan/tripPlan.jsp";
-			req.getRequestDispatcher(url).forward(req, res);
-			
-			
+			if ("ajax".equals(method)) {
+				Gson gson = new Gson();
+				String jsonStr = "";
+				jsonStr = gson.toJson(tripVO);
+				PrintWriter out = res.getWriter();
+				out.print(jsonStr);;
+				out.close();
+			}else {
+				String url = "/front-end/TripPlan/tripPlan.jsp";
+				req.getRequestDispatcher(url).forward(req, res);				
+			}
 		}
 		
 	}

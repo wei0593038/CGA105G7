@@ -1,5 +1,6 @@
 $(document).ready(()=>{
 	getTripDetailAjax(startDate);
+	getCusLoc();
 	console.log(startDate);
 });
 
@@ -27,7 +28,6 @@ function getOneLocAjax(locId){
 	},
 	function(data){
 		console.log(data);
-		console.log(data[1]);
 	let bsSlide = '';
 	let images = '';//.length() == null? "---":data[0].locPhone
 			if(data[1] !== undefined){		
@@ -62,7 +62,7 @@ function getOneLocAjax(locId){
                 <p class="col-12 m-0 px-5 text-start">Address:</p>
                 <p class="col-12 m-0 fs-5 text-center text-truncate">${data[0].locAddress}</p>
                 <p class="col-12 m-0 px-5 text-start">Phone:</p>
-                <p class="col-12 m-0 fs-5 text-center text-truncate">${data[0].locPhone}</p>
+                <p class="col-12 m-0 fs-5 text-center text-truncate">${data[0].locPhone === undefined? '---' : data[0].locPhone}</p>
               </div>
 
               <div class="row justify-content-center">
@@ -79,11 +79,11 @@ function getOneLocAjax(locId){
                         <div class="modal-body">
                           <div class="text-center m-2">
                             <label for="">預計到達時間 : </label>
-                            <input type="text" name="arrivalTime" id="arrivalTime">
+                            <input type="text" name="arrivalTime" id="arrivalTime" onkeypress="$(this).val('')">
                           </div>
                           <div class="text-center m-2">
                             <label for="">預計離開時間 : </label>
-                            <input type="text" name="leaveTime" id="leaveTime">
+                            <input type="text" name="leaveTime" id="leaveTime" onkeypress="$(this).val('')">
                           </div>
                           <div class="text-center m-2">
                             <label for="">預計停留時間 : </label>
@@ -120,9 +120,13 @@ function getTripDetailAjax(date){
 	   DATE : date
 	},
 	function(data){
+		console.log("this is tripDetail")
 		console.log(data);
 		let tripLocPic = ``;
-		let htmlStr="";
+		let htmlStr='';
+		if(data.length !== 0){
+			htmlStr+=`<div class="col-3 btn mx-3 text-white" style="background-color:pink;">${data[0].DATE}</div>`
+		}
 		for(let count = 0; count < data.length; count++){
 			if(data[count].locPic != ""){
 				tripLocPic = `<img src="data:image/png;base64,${data[count].locPic}" class="w-100 h-100" >`;
@@ -131,7 +135,7 @@ function getTripDetailAjax(date){
 			}
 			htmlStr+=
             `<div class="col-12 d-flex mt-2" style="height:90px">
-            <a class="col-10 d-flex align-items-center bg-cblue custom-loc" onclick="getOneLocAjax(${data[count].LocId})">
+            <a class="col-10 d-flex align-items-center bg-cblue custom-loc" onclick="getOneLocAjax(${data[count].LocId}); focusTripLoc(${data[count].Lat},${data[count].Long})">
               <div class="col-4 p-2 h-100" >
                 ${tripLocPic}
               </div>
@@ -147,7 +151,8 @@ function getTripDetailAjax(date){
 	},"json");
 }
 
-
+let markers = [];
+let polylines = [];
 function updateMap(){
 	$.get(`${path}/front-end/TripPlan/tripLoc.do`,
 	{  action: 'ajaxGetLocInfo',
@@ -156,8 +161,12 @@ function updateMap(){
 	   tripId : tripId
 	},
 	function(data){
+		markers.forEach((marker)=>marker.remove());
+		polylines.forEach((polyline)=>polyline.remove());
+		console.log("this is updateMap");
+		console.log(data);
 	for(let count = 0; count < data.length; count++){
-		var tripMarker = L.ExtraMarkers.icon({
+		var tripIcon = L.ExtraMarkers.icon({
 			icon:'fa-number',
 			markerColor:'cyan',
 			shape:'circle',
@@ -166,7 +175,8 @@ function updateMap(){
 		});
 		let lat =data[count].latitude;
 		let lng = data[count].longitude;
-	L.marker([lat,lng],{icon : tripMarker}).addTo(map).bindPopup(data[count].locName);
+	let tripMarker=L.marker([lat,lng],{icon : tripIcon}).addTo(map).bindPopup(data[count].locName);
+	markers.push(tripMarker);
 	}
 	/********* marker的連線 *********/
 	if(data.length >= 2){
@@ -175,10 +185,11 @@ function updateMap(){
 			let firstLng = data[first].longitude;
 			let secLat = data[sec].latitude;
 			let secLng = data[sec].longitude;
-			L.polyline([
+			let tripPolyline =L.polyline([
 				[firstLat, firstLng],
 				[secLat, secLng],
 				],{color:'lightBlue',weight:10,opacity:0.8}).addTo(map)
+			polylines.push(tripPolyline);	
 		}
 	}
 },"json");
@@ -195,6 +206,127 @@ function deleteTripLoc(tripDetailId){
 	});
 }
 
+function addCusLoc(){
+	$.post(`${path}/front-end/TripPlan/tripLoc.do`,
+	{
+		action : 'insert',
+		userId : $('#cusLocUserId').val(),
+		loc_name : $('#cusLocName').val(),
+		longitude :$('#longitude').val(),
+		latitude :$('#latitude').val(),
+		address : $('#cusLocAddress').val(),
+		phone : $('#cusLocPhone').val(),
+		locStatus : 2,
+		forwardWhere :'front-end'
+	}, 
+	function(data){
+		console.log(data);
+        getCusLoc();
+		
+	},"json");
+}
+
+//updateTripName
+function updateTripName(){
+	$.post(`${path}/front-end/TripPlan/tripPlan.do`,
+	{
+		action : 'update',
+		tripId : tripId,
+		startDate : startDate,
+		endDate : endDate,
+		tripName :$('#upDateTripName').val(),
+		coverPic:$('#updateTNPic').val(),
+		note:$('#updateTNNote').val(),
+		method:'ajax'
+	},function(data){
+		console.log("this is ajax update");
+		console.log(data);
+		swal("更改成功!!", `活動名稱 : ${data.tripName}`, "success");
+	},"json");
+}
+
+
+function deleteUserLoc(locId){
+	$.post(`${path}/front-end/TripPlan/tripLoc.do`,
+	{
+		action : 'deleteUserLoc',
+		LOC_ID : locId
+		
+	},
+	function(data){
+		console.log(data);
+		swal ( "成功刪除自訂景點" ,  "" ,  "success" );
+		getCusLoc();
+	});
+}
+
+function getCusLoc(){
+	console.log('yser dfkaljfdk l');
+	$.get(`${path}/front-end/TripPlan/tripLoc.do`,
+	{
+		action :'ajaxGetCusLoc',
+		USER_ID : userId
+	},function(data){
+		let htmlStr = '';
+		for(let count = 0; count < data.length; count++){
+			htmlStr+=`<div class="custom-loc trip-btn col-10 d-flex align-items-center bg-cblue my-2 p-0" onclick="getOneLocAjax(${data[count].locId});focusToMap(${data[count].latitude},${data[count].longitude},'${data[count].locName}',true)">
+                  <div class="col-3 text-center">
+                    <i class="bi bi-geo-alt-fill fa-2x"></i>
+                  </div>
+                  <div class="col-7 px-2">
+                    <p class="text-start text-truncate m-1">${data[count].locName}</p>
+                    <p class="text-start text-truncate m-1">${data[count].locAddress}</p>
+                  </div>
+                </div>
+                <div class="col-2 p-0 my-2 text-center">
+                  <button type="button" class="h-100 w-100 delete-cusLoc" title="刪除我的地點" onclick="deleteCusLoc(this,${data[count].locId})"><i class="bi bi-trash3-fill fa-2x"></i></button>
+                </div>`;
+		}
+		
+		$('#couLocContainer').html(htmlStr);
+		
+	},"json");
+}
+
+function updateTripNote(){
+	$.post(`${path}/front-end/TripAll/trip.do`,
+	{
+		action : 'update',
+		startDate : startDate,
+		endDate : endDate,
+		tripId : tripId,
+		tripName :$('#note-tripName').val(),
+		coverPic :$('#note-coverPic').val(),
+		note :$('#note-input').val(),
+		method : 'ajax'
+	},
+	function(data){
+		console.log(data);
+		$('#note-tripName').val(`${data.note}`);
+		swal ( "修改成功" ,  `${data.note}` , "success");
+	
+	},"json");
+}
+
+function addUserToTrip(){
+	$.post(`${path}/front-end/TripPlan/tripMbr.do`,
+	{
+		action : 'insert',
+		TRIP_ID : tripId,
+		USER_ID :'',
+		USER_ACCOUNT : $('#addUserAccount').val(),
+	},
+	function(data){
+		console.log("this.is addUser")
+		console.log(data);
+		let htmlStr = `<div class="col-12 my-2">
+                  		<img src="" class="mbr-pic">
+                  		<h5 class="d-inline align-middle">成員名稱</h5>
+                  	  </div>`;
+           $('#invitingUser').append(htmlStr);       	  
+       		 swal ( "邀請成功" ,  `` , "success");
+	},"json");
+}
 
 
 

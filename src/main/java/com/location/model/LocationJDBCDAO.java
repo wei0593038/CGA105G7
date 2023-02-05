@@ -28,7 +28,7 @@ public class LocationJDBCDAO implements LocationDAO_interface {
 	private static final String GET_ONE_STMT = "SELECT LOC_ID,USER_ID,LOC_NAME,LONGITUDE,LATITUDE,LOC_ADDRESS,LOC_PHONE,LOC_STATUS FROM location where LOC_ID = ?";
 	private static final String GET_ALL_STMT = "SELECT LOC_ID,USER_ID,LOC_NAME,LONGITUDE,LATITUDE,LOC_ADDRESS,LOC_PHONE,LOC_STATUS FROM location where LOC_STATUS != 2 order by LOC_ID desc";
 	private static final String GET_GROUP ="SELECT LOC_ID,USER_ID,LOC_NAME,LONGITUDE,LATITUDE,LOC_ADDRESS,LOC_PHONE,LOC_STATUS FROM location WHERE concat(LOC_NAME,LOC_ADDRESS,LOC_PHONE) like ? and LOC_STATUS in(?,?)";
-	private static final String GET_FK_USERID = "SELECT LOC_ID,USER_ID,LOC_NAME,LONGITUDE,LATITUDE,LOC_ADDRESS,LOC_PHONE,LOC_STATUS FROM location WHERE USER_ID=?";
+	private static final String GET_FK_USERID = "SELECT LOC_ID,USER_ID,LOC_NAME,LONGITUDE,LATITUDE,LOC_ADDRESS,LOC_PHONE,LOC_STATUS FROM location WHERE USER_ID=? order by LOC_ID desc";
 
 	@Override
 	public void insert(LocationVO locationVO) {

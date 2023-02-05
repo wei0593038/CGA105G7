@@ -13,8 +13,6 @@
 	TripService tripSvc = new TripService();
 	List<TripVO> triplist = tripSvc.getAll(userId);
 	pageContext.setAttribute("triplist", triplist);
-	
-	
 %>
 
 <%@ include file="../headAndFoot/header.jsp" %>

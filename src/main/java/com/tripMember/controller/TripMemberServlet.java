@@ -1,6 +1,7 @@
 package com.tripMember.controller;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -8,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.Gson;
 import com.tripMember.model.TripMemberService;
 import com.tripMember.model.TripMemberVO;
 
@@ -36,12 +38,13 @@ public class TripMemberServlet extends HttpServlet{
 			//2.開始新增資料
 			TripMemberService tripMbrSvc = new TripMemberService();
 			TripMemberVO tripMbrVO = tripMbrSvc.addTripMbr(tripId, userId, isMbr);
-			req.setAttribute("tripMbrVO", tripMbrVO);
 			
 			//3.新增完成，轉交頁面
-			String url = "/front-end/TripPlan/tripPlan.jsp";
-			req.getRequestDispatcher(url).forward(req, res);
-			
+			Gson gson = new Gson();
+			String jsonStr = gson.toJson(tripMbrVO);
+			PrintWriter out = res.getWriter();
+			out.print(jsonStr);
+			out.close();
 			
 		}
 	}

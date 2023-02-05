@@ -2,26 +2,21 @@
 <%@page import="com.locationPic.model.LocationPicService"%>
 <%@page import="com.location.model.LocationVO"%>
 <%@page import="java.util.List" %>
-<%@page import="java.util.Base64"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <%
 //先接userId UsersVO usersVO = (UsersVO) session.getAttribute("usersVO");
-	
-//先去userId去找出 該user的自訂景點
 	Integer userID = (Integer)session.getAttribute("userId");
-	LocationService locSvc = new LocationService();
-	List<LocationVO> loclist = locSvc.getForUserId(userID);
-	pageContext.setAttribute("loclist", loclist);
 %>
    
      <div class="col-3 locInfo-title" id="loc-info">
         <div class="row">
           <ul class="nav nav-pills p-0" id="pills-tab" role="tablist">
             <li class="nav-item col-5" role="presentation">
-              <button class="btn trip-btn w-100 active" id="locInfo-tab">
+              <button class="btn trip-btn w-100 active" id="locInfo-tab" data-bs-toggle="pill" data-bs-target="#locInfo"
+                type="button" role="tab" aria-controls="cusLoc" aria-selected="false">
                 <i class="bi bi-geo-alt-fill fa-2x"></i>
                 <p class="m-0 d-inline">地點</p>
               </button>
@@ -54,10 +49,10 @@
               <form action="tripLoc.do" method="post" class="row" enctype="multipart/form-data">
                 <h3 class="fw-bold p-0 mt-3">建立新景點</h3>
                 <p class="text-danger">* 星號為必填欄位</p>
-                <input type="text" class="col-12 newLoc-input" name="loc_name" placeholder="*請輸入地點名稱">
-                <input type="text" class="col-12 newLoc-input" name="address" id="address" placeholder="*請輸入地址">
-                <input type="text" class="col-12 newLoc-input" name="phone" placeholder="請輸入電話">
-                <input type="hidden" name="userId" value="<%=userID%>">
+                <input type="text" class="col-12 newLoc-input" name="loc_name" id="cusLocName" placeholder="*請輸入地點名稱">
+                <input type="text" class="col-12 newLoc-input" name="address" id="cusLocAddress" placeholder="*請輸入地址">
+                <input type="number" class="col-12 newLoc-input" name="phone" id="cusLocPhone" placeholder="請輸入電話">
+                <input type="hidden" name="userId" id="cusLocUserId" value="<%=userID%>">
                 <input type="hidden" name="longitude" id="longitude" value="">
                 <input type="hidden" name="latitude" id="latitude" value="">
                 <input type="hidden" name="locStatus" value="2">
@@ -68,25 +63,7 @@
               <!-- custom location end -->
 
              <h4 class="fw-bold mt-3 p-0">我的自訂地點</h4>
-              <div class="row">
-                <!--customLocation btn start -->
-                <c:forEach var="locVO" items="${loclist}">
-                <a href="tripLoc.do?LOC_ID=${locVO.locId}&TRIP_ID=${tripVO.tripId}&DATE=${tripVO.startDate}&action=getOneLoc" class="custom-loc trip-btn col-10 d-flex align-items-center bg-cblue my-2 p-0">
-                  <div class="col-3 text-center">
-                    <i class="bi bi-geo-alt-fill fa-2x"></i>
-                  </div>
-                  <div class="col-7 px-2">
-                    <p class="text-start text-truncate m-1">${locVO.locName}</p>
-                    <p class="text-start text-truncate m-1">${locVO.locAddress}</p>
-                  </div>
-                </a>
-                <form action="tripLoc.do" method="post" class="col-2 p-0 my-2 text-center">
-                  <button type="button" class="h-100 w-100 delete-cusLoc" title="刪除我的地點" onclick=" deleteCusLoc(this)"><i class="bi bi-trash3-fill fa-2x"></i></button>
-                  <input type="hidden" name="action" value="deleteUserLoc">
-                  <input type="hidden" name="LOC_ID" value="${locVO.locId}">
-                </form>
-                </c:forEach>
-                <!--customLocation btn end -->
+              <div class="row" id="couLocContainer">
               </div>
             </div>
           </div>

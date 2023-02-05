@@ -54,7 +54,7 @@ public class LocationServlet extends HttpServlet {
 			String forwardWhere = req.getParameter("forwardWhere");
 			
 			// 解析圖片
-			Collection<Part> pic = req.getParts();
+			Collection<Part> pic = "front-end".equals(forwardWhere)? new ArrayList<Part>() : req.getParts();
 
 //					開始新增資料					
 			LocationService locSer = new LocationService();
@@ -62,8 +62,21 @@ public class LocationServlet extends HttpServlet {
 			
 			req.setAttribute("locVO", locVO);
 //					完成新增準備轉交
-			String url = "front-end".equals(forwardWhere)? "/front-end/TripPlan/tripPlan.jsp":"/back-end/Location/locManage.jsp";
-			req.getRequestDispatcher(url).forward(req, res);
+			if("front-end".equals(forwardWhere)) {
+				//前台使用ajax
+				Gson gson = new Gson();
+				String jsonStr = "";
+				jsonStr = gson.toJson(locVO);
+				PrintWriter out = res.getWriter();
+				out.print(jsonStr);
+				out.close();
+			}else {
+				String url = "/back-end/Location/locManage.jsp";
+				req.getRequestDispatcher(url).forward(req, res);
+			}
+			
+			
+			
 		}
 
 		if ("getOne_For_Update".equals(action)) {//來自/back-end的請求 
@@ -181,9 +194,11 @@ public class LocationServlet extends HttpServlet {
 			LocationService locSvc = new LocationService();
 			locSvc.deleteUserLoc(locId);
 			
-			//3.刪除完成後開始轉交
-			String url = "/front-end/TripPlan/tripPlan.jsp";
-			req.getRequestDispatcher(url).forward(req, res);
+			//3.刪除完成後，傳成功刪除訊息給JS
+			PrintWriter out = res.getWriter();
+			out.print("successfully deleted");
+			out.close();
+			
 		}
 		
 		if ("ajaxGetLocInfo".equals(action)) {//來自map.js的請求 ajax
@@ -212,6 +227,23 @@ public class LocationServlet extends HttpServlet {
 			out.print(jsonStr);
 			out.close();
 			
+		}
+		
+		if("ajaxGetCusLoc".equals(action)) {
+			//1.接收參數
+			Integer userId = Integer.valueOf(req.getParameter("USER_ID"));
+			
+			//2.開始查詢
+			LocationService locSvc = new LocationService();
+			List<LocationVO> locList = locSvc.getForUserId(userId);
+			
+			//3.轉傳資料給JS
+			Gson gson = new Gson();
+			String jsonStr = "";
+			jsonStr = gson.toJson(locList);
+			PrintWriter out = res.getWriter();
+			out.print(jsonStr);
+			out.close();
 		}
 
 	}

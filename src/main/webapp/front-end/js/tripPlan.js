@@ -229,7 +229,7 @@ function deletOneLoc(e,tripDetailId){
 }
 
 //Delete customized Location 
-function deleteCusLoc(e){
+function deleteCusLoc(e,locId){
 	  swal({
     title: "確定刪除自訂景點?",
     text: "刪除後將無法復原!!",
@@ -250,42 +250,44 @@ function deleteCusLoc(e){
     dangerMode: true,
   }).then((willDelete) => {
     if (willDelete) {
-      swal("成功刪除", {
-        icon: "success",
-      }).then(()=>{
-        e.closest('form').submit();
-      });
+     deleteUserLoc(locId);
     }
   });
 }
 
 //changeTripDate
 function changeTripDate(e){
-	  swal({
-    title: "確定更改日期?",
-    text: "刪除後將無法復原!!",
-    icon: "warning",
-    buttons: {
-      cancel: {
-        text: "取消",
-        visible: true
-      },
-      confirm: {
-        text: "確定",
-        value: true,
-        visible: true,
-        className: "",
-        closeModal: false
-      },
-    },
-    dangerMode: true,
-  }).then((willDelete) => {
-    if (willDelete) {
-      swal("更改成功!!", {
-        icon: "success",
-      }).then(()=>{
-        e.closest('form').submit();
-      });
-    }
-  });
+	console.log($('#updateStartDate').val());
+	if($('#updateStartDate').val()){console.log('haha')}
+	if(!$('#updateStartDate').val() || !$('#updateEndDate').val()){
+		swal ( "Oops" ,  "請輸入日期!!" ,  "error" )
+	}else{
+		  swal({
+	    title: "確定更改日期?",
+	    text: "刪除後將無法復原!!",
+	    icon: "warning",
+	    buttons: {
+	      cancel: {
+	        text: "取消",
+	        visible: true
+	      },
+	      confirm: {
+	        text: "確定",
+	        value: true,
+	        visible: true,
+	        className: "",
+	        closeModal: false
+	      },
+	    },
+	    dangerMode: true,
+	  }).then((willDelete) => {
+	    if (willDelete) {
+	      swal("更改成功!!", {
+	        icon: "success",
+	      }).then(()=>{
+	        e.closest('form').submit();
+	      });
+	    }
+	  });		
+	}
 }

@@ -80,6 +80,7 @@ public class tripDetailServlet extends HttpServlet{
 				map.put("LocId",activeList.get(count).getLocId());
 				map.put("ArrivalTime",format.format(activeList.get(count).getArrivalTime()));
 				map.put("LeaveTime",format.format(activeList.get(count).getLeaveTime()));
+				map.put("DATE", new SimpleDateFormat("MM/dd").format(date));
 				//取得地點資訊
 				LocationService locSvc = new LocationService();
 				LocationVO locVO= locSvc.getOneLoc(activeList.get(count).getLocId());
