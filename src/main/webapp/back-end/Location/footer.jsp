@@ -8,7 +8,8 @@
 		integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
 		crossorigin="anonymous"></script>
 	<script src="<%=request.getContextPath() %>/back-end/js/Loc.js"></script>
-
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+	<script async src="https://maps.googleapis.com/maps/api/js?key=API_KEY&libraries=places&callback=initMap"></script>
 </body>
 
 </html>

@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
     
 
-  <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBClauBLzCvHsAzsjqxSn_VjxHKUDtamHM&libraries=places&callback=initMap"></script>
+  <script async src="https://maps.googleapis.com/maps/api/js?key=API_KEY&libraries=places&callback=initMap"></script>
   <script src="<%=request.getContextPath()%>/front-end/js/geocoding.js"></script>
   <script src="<%=request.getContextPath()%>/front-end/js/tripPlanAjax.js"></script>
   

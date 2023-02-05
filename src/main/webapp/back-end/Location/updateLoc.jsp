@@ -3,9 +3,6 @@
 <%@page import="com.location.model.LocationVO"%>
 	
 <%LocationVO locVO = (LocationVO)request.getAttribute("locVO"); %>
-	
-	
-    
     <div class="modal fade" id="update">
         <div class="modal-dialog">
 
@@ -18,63 +15,28 @@
             <div class="modal-body">
               <div class="container">
                 <div class="row m-2">
-                  <div class="col text-end p-0">
-                    <label for="Uloc_name">景點名稱 : </label>
-                  </div>
-                  <div class="col">
-                    <input type="text" name="loc_name" id="Uloc_name" maxlength="15" placeholder="必填" value="${locVO.locName}">
-                  </div>
-                  <div class="col text-start p-0">
-                    <span id="Uloc-error"></span>
-                  </div>
+                    <label for="uloc_name" class="col-4">景點名稱 : </label>
+                    <input type="text" name="loc_name" class="col-6" id="uloc_name" maxlength="15" placeholder="必填" value="${locVO.locName}" required>
                 </div>
 
                 <div class="row m-2">
-                  <div class="col text-end p-0">
-                    <label for="Ulongitude">經度 : </label>
-                  </div>
-                  <div class="col">
-                    <input type="text" name="longitude" id="Ulongitude" maxlength="30" placeholder="必填" value="${locVO.longitude}">
-                  </div>
-                  <div class="col text-start p-0">
-                    <span id="Ulong-error"></span>
-                  </div>
+                    <label for="ulongitude" class="col-4">經度 : </label>
+                    <input type="text" name="longitude" class="col-6" id="ulongitude" readonly value="${locVO.longitude}">
                 </div>
 
                 <div class="row m-2">
-                  <div class="col text-end p-0">
-                    <label for="Ulatitude">緯度 : </label>
-                  </div>
-                  <div class="col">
-                    <input type="text" name="latitude" id="Ulatitude" maxlength="30" placeholder="必填" value="${locVO.latitude}">
-                  </div>
-                  <div class="col text-start p-0">
-                    <span id="Ulati-error"></span>
-                  </div>
+                    <label for="ulatitude" class="col-4">緯度 : </label>
+                    <input type="text" name="latitude" class="col-6" id="ulatitude" readonly value="${locVO.latitude}">
                 </div>
 
                 <div class="row m-2">
-                  <div class="col text-end p-0">
-                    <label for="Uaddress">地址 : </label>
-                  </div>
-                  <div class="col">
-                    <input type="text" name="address" id="Uaddress" maxlength="30" placeholder="必填" value="${locVO.locAddress}">
-                  </div>
-                  <div class="col text-start p-0">
-                    <span id="Uaddress-error"></span>
-                  </div>
+                    <label for="uaddress" class="col-4">地址 : </label>
+                    <input type="text" name="address" class="col-6" id="uaddress" maxlength="30" placeholder="必填" value="${locVO.locAddress}" required>
                 </div>
 
                 <div class="row m-2">
-                  <div class="col text-end p-0">
-                    <label for="Uphone">連絡電話 : </label>
-                  </div>
-                  <div class="col">
-                    <input type="text" name="phone" id="Uphone" maxlength="15" value="${locVO.locPhone}">
-                  </div>
-                  <div class="col text-start p-0">
-                    <span id="Uphone-error"></span>
-                  </div>
+                    <label for="uphone" class="col-4">連絡電話 : </label>
+                    <input type="text" name="phone" class="col-6" id="uphone" maxlength="15" value="${locVO.locPhone}">
                 </div>
 
                 <div class="row m-2">
@@ -91,16 +53,13 @@
                   </div>
                 </div>
               </div>
-
             </div>
             <div class="modal-footer">
-            
             <input type="hidden" name="action" value="update">
             <input type="hidden" name="locId" value="${locVO.locId}">
 			<input type="hidden" name="userId" value="${locVO.userId}">
-			
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-              <button type="submit" class="btn btn-primary" id="updateSend" disabled>送出</button>
+              <button type="submit" class="btn btn-primary" id="updateSend">送出</button>
             </div>
           </form>
 
