@@ -20,7 +20,7 @@ public class TripJDBCDAO implements TripDAO_interface{
 	private static final String INSERT_STMT = 
 			"INSERT INTO trip (TRIP_NAME,START_DATE,END_DATE,COVER_PIC,NOTE) VALUES (?,?,?,?,?)";
 		private static final String GET_ALL_STMT = 
-			"SELECT trip.TRIP_ID, trip.TRIP_NAME, trip.START_DATE, trip.END_DATE, trip.COVER_PIC, trip.NOTE FROM trip left join trip_member on trip.TRIP_ID = trip_member.TRIP_ID where trip_member.USER_ID = ? order by TRIP_ID";
+			"SELECT trip.TRIP_ID, trip.TRIP_NAME, trip.START_DATE, trip.END_DATE, trip.COVER_PIC, trip.NOTE FROM trip left join trip_member on trip.TRIP_ID = trip_member.TRIP_ID where trip_member.USER_ID = ? AND trip_member.IS_MBR = 1 order by TRIP_ID";
 		private static final String GET_ONE_STMT = 
 			"SELECT TRIP_ID,TRIP_NAME,START_DATE,END_DATE,COVER_PIC,NOTE FROM trip where TRIP_ID = ?";
 		private static final String DELETE = 

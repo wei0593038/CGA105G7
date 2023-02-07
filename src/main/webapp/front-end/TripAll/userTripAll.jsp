@@ -8,11 +8,22 @@
 
 <!-- 	UsersVO usersVO = (UsersVO) session.getAttribute("usersVO"); -->
 <%
-	Integer userId = 1;//這裡會員資料先寫死
+	Integer userId = null;
+	if(request.getParameter("USER_ID") != null){
+	userId = Integer.valueOf(request.getParameter("USER_ID"));//這裡會員資料先寫死
+	System.out.println("Parameter");
+	}else{
+		System.out.println("session");
+		userId =  (Integer)session.getAttribute("userId");		
+	}
+	session.setAttribute("userId", userId);		
 
+	//搜尋user所有的 trip
 	TripService tripSvc = new TripService();
 	List<TripVO> triplist = tripSvc.getAll(userId);
 	pageContext.setAttribute("triplist", triplist);
+	
+	
 %>
 
 <%@ include file="../headAndFoot/header.jsp" %>
@@ -51,7 +62,7 @@
             <div class="card tripCard d-inline-block m-2" style="width: 18rem;">
             <a href="<%=request.getContextPath()%>/front-end/TripPlan/tripPlan.jsp?TRIP_ID=${tripVO.tripId}">
               <c:if test="${tripVO.coverPic != null }">
-                <img src="data:image/png;base64,${Base64.getEncoder().encodeToString(tripVO.coverPic)}" class="card-img-top">
+                <img src="data:image/png;base64,${Base64.getEncoder().encodeToString(tripVO.coverPic)}" class="card-img-top" style="height: 150px">
               </c:if>
               <c:if test="${tripVO.coverPic == null }">
                <h3 class="d-block">尚無圖片</h3>
@@ -114,12 +125,12 @@
             <div class="d-flex justify-content-around">
               <div class="form-outline mb-4">
                 <label class="form-label" for="tripStart">出發日期 : </label>
-                <input type="text" id="tripStart" class="form-control" name="start_date" required />
+                <input type="text" id="tripStart" class="form-control" name="start_date" required onkeypress="$(this).val('')" />
               </div>
 
               <div class="form-outline mb-4">
                 <label class="form-label" for="tripEnd">結束日期 : </label>
-                <input type="text" id="tripEnd" class="form-control" name="end_date" required />
+                <input type="text" id="tripEnd" class="form-control" name="end_date" required onkeypress="$(this).val('')" />
               </div>
             </div>
 
@@ -127,7 +138,6 @@
               <label class="form-label" for="actContent">提醒事項</label>
               <textarea class="form-control" style="height: 200px; resize: none;" id="actContent" name="note"></textarea>
             </div>
-
             <img class="shadow w-100" style="height: 300px;" hidden>
             <div class="input-group p-3">
               <label class="input-group-text" for="cover-pic">封面背景</label>
@@ -138,7 +148,7 @@
 		  <input type="hidden" name="userId" value="<%=userId%>">
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-            <button type="submit" class="btn btn-primary">7Tour 囉!!</button>
+            <button type="submit" class="btn btn-primary" onclick="addTripForm(event)">7Tour 囉!!</button>
           </div>
         </form>
       </div>
@@ -176,7 +186,7 @@
 			<input type="hidden" name="NOTE" value="${tripVO.note}">
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-            <button type="submit" class="btn btn-primary">送出</button>
+            <button type="submit" class="btn btn-primary" onclick="updateTripPicForm(event)">送出</button>
           </div>
         </form>
       </div>

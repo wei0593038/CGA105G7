@@ -188,17 +188,17 @@ button.active {
 }
 
 .trip-msg {
-  border: 1px solid black;
+ border: 1px solid black;
   padding: 5px;
-  display: inline-block;
-  width: 50%;
+  max-width: 50%;
+  height: auto;
   word-wrap: break-word;
   margin: 0 0 0 2%;
   border-radius: 10px;
 }
 
 #msg-content{
-  height: calc(100% - 70px);
+  height: calc(100% - 90px);
   overflow: auto;
   overflow-x: hidden;
   background-color: aliceblue;

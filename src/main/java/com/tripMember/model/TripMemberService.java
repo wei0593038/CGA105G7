@@ -35,4 +35,8 @@ public class TripMemberService {
 	public List<TripMemberVO> getTripMbr(Integer tripId) {
 		return dao.findByTripId(tripId);
 	}
+	
+	public TripMemberVO checkUserInTrip(Integer tripId, Integer userId){
+		return dao.getOneMbr(tripId, userId);
+	}
 }

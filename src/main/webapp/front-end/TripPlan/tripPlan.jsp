@@ -21,15 +21,22 @@
 <%
 // 先接userId UsersVO usersVO = (UsersVO) session.getAttribute("usersVO");
 	Integer userId =  (Integer)session.getAttribute("userId");
-	System.out.println(userId);
+	
 	Integer tripId = null;
 	if(request.getParameter("TRIP_ID") != null){
 		tripId =  Integer.valueOf(request.getParameter("TRIP_ID"));		
 	}else{
 		tripId = (Integer)session.getAttribute("tripId");
 	}
-	System.out.println(tripId);
+	System.out.println("使用者 " + userId + " 來到 " + tripId + " 旅遊行程!!");
 	session.setAttribute("tripId", tripId);
+	
+//搜尋tripMember 該user是不是在trip內的成員
+	TripMemberService tripMemSvc = new TripMemberService();
+	TripMemberVO tripMbrVO = tripMemSvc.checkUserInTrip(tripId, userId);
+	if(tripMbrVO == null){
+		request.getRequestDispatcher("https://tw.yahoo.com/?p=us").forward(request, response);
+	}
 	
 // tripId search tripVO
 	TripService tripSvc = new TripService();
@@ -186,7 +193,7 @@
               <c:forEach var="tripMbrVO" items="${tripMbr}">
               	<c:if test="${tripMbrVO.isMbr == true }">
                   <div class="col-12 my-2">
-                  	<img src="xx" alt="" class="mbr-pic">
+<!--                   	<img src="xx" alt="" class="mbr-pic"> -->
                   	<h5 class="d-inline align-middle">成員名稱</h5>
                   </div>
                 </c:if>
@@ -197,7 +204,7 @@
               <c:forEach var="tripMbrVO" items="${tripMbr}">
               	<c:if test="${tripMbrVO.isMbr == false }">
                   <div class="col-12 my-2">
-                  	<img src="xx" alt="" class="mbr-pic">
+<!--                   	<img src="xx" alt="" class="mbr-pic"> -->
                   	<h5 class="d-inline align-middle">成員名稱</h5>
                   </div>
                 </c:if>
@@ -255,40 +262,23 @@
 <!--  search rusult end  -->
       
       <!-- mbr group msg start -->
-      <div class="col-3 p-2 pt-0 overflow-hidden" id="mbr-chat">
-        <div class="row" style="background-color: rgba(38, 112, 180, 0.6);">
-          <h5 class="col-6 text-truncate text-start fw-bold m-0 align-middle py-2">聊天室(<%=inTripCount%>)</h5>
+      <div class="col-3 p-0 overflow-hidden" id="mbr-chat">
+        <div class="d-flex" style="background-color: rgba(38, 112, 180, 0.6);">
+          <h5 class="ps-2 col-6 text-truncate text-start fw-bold m-0 align-middle py-2">聊天室(<%=inTripCount%>)</h5>
           <button class="col-2 btn trip-btn" id="notes-btn"><i class="bi bi-stickies-fill"></i></button>
           <button class="col-2 btn trip-btn" id="mbrs-btn"><i class="bi bi-gear-fill"></i></button>
           <button class="col-2 btn trip-btn" id="close-msg"><i class="bi bi-dash"></i></button>
         </div>
         <hr class="m-0">
 
-        <div class="row" id="msg-content">
-          <div class="col-12 m-2">
-            <img src="./images/dog.jpeg" class="user-pic d-inline align-top" alt="使用者">
-            <p class="trip-msg">
-              xxXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</p>
-            <p class="d-inline align-bottom" style="font-size: 10px;">下午12:00</p>
-          </div>
-          <div class="col-12 m-2">
-            <img src="./images/dog.jpeg" class="user-pic d-inline align-top" alt="使用者">
-            <p class="trip-msg">
-              XXXXXXXXXXXXXXXXX</p>
-            <p class="d-inline align-bottom" style="font-size: 10px;">下午12:00</p>
-          </div>
-          <div class="col-12 m-2 text-end">
-            <p class="d-inline align-bottom" style="font-size: 10px;">下午12:00</p>
-            <p class="trip-msg">
-              xxXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</p>
-          </div>
+        <div id="msg-content">
+          
+          
         </div>
 
-        <div class="row" style="background-color: aliceblue;">
-          <form action="" method="post">
-            <input type="text" id="msg-input">
-            <button type="submit" class="btn trip-btn"><i class="bi bi-send-fill"></i></button>
-          </form>
+        <div class="p-2 ps-4 border-top border-dark" style="background-color: aliceblue;">
+            <input type="text" id="msg-input" onkeydown="if (event.keyCode == 13) sendMsg(<%=userId%>);">
+            <button type="button" class="btn trip-btn" onclick="sendMsg(<%=userId%>)"><i class="bi bi-send-fill"></i></button>
         </div>
       </div>
       <!-- mbr group msg end -->
@@ -314,5 +304,6 @@
   <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
   <script src="<%=request.getContextPath() %>/front-end/LeafletMarkers/js/leaflet.extra-markers.min.js"></script>
   <script src="<%=request.getContextPath() %>/front-end/js/map.js"></script>
+  <script src="<%=request.getContextPath() %>/front-end/js/websocket.js"></script>
   
 <%@ include file="../headAndFoot/footer.jsp" %>

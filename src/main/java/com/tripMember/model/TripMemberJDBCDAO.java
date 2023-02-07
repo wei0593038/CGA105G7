@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.tripDetail.model.TripDetailVO;
+
 public class TripMemberJDBCDAO implements TripMemberDAO_interface{
 	String driver = "com.mysql.cj.jdbc.Driver";
 	String url = "jdbc:mysql://localhost:3306/test01?serverTimezone=Asia/Taipei";
@@ -22,6 +24,8 @@ public class TripMemberJDBCDAO implements TripMemberDAO_interface{
 			"DELETE FROM trip_member where TRIP_MBR_ID = ?";
 	private static final String GET_GROUP_STMT = 
 			"SELECT TRIP_MBR_ID,TRIP_ID,USER_ID,IS_MBR FROM trip_member where TRIP_ID = ?";
+	private static final String GET_ONE_STMT =
+			"SELECT TRIP_MBR_ID,TRIP_ID,USER_ID,IS_MBR FROM TRIP_MEMBER WHERE TRIP_ID=? AND USER_ID = ?";
 	
 	@Override
 	public void insert(TripMemberVO tripMemberVO) {
@@ -237,5 +241,63 @@ public class TripMemberJDBCDAO implements TripMemberDAO_interface{
 		return list;
 	}
 	
+	public TripMemberVO getOneMbr(Integer tripId, Integer userId) {
+		TripMemberVO tripMemberVO =null;
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
 
+		try {
+
+			Class.forName(driver);
+			con = DriverManager.getConnection(url, userid, passwd);
+			pstmt = con.prepareStatement(GET_ONE_STMT);
+
+			pstmt.setInt(1, tripId);
+			pstmt.setInt(2, userId);
+
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				tripMemberVO = new TripMemberVO();
+				tripMemberVO.setTripMbrId(rs.getInt("TRIP_MBR_ID"));
+				tripMemberVO.setTripId(rs.getInt("TRIP_ID"));
+				tripMemberVO.setUserId(rs.getInt("USER_ID"));
+				tripMemberVO.setIsMbr(rs.getBoolean("IS_MBR"));
+			}
+
+			// Handle any driver errors
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Couldn't load database driver. "+ e.getMessage());
+			// Handle any SQL errors
+		} catch (SQLException se) {
+			throw new RuntimeException("A database error occured. "+ se.getMessage());
+			// Clean up JDBC resources
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (pstmt != null) {
+				try {
+					pstmt.close();
+				} catch (SQLException se) {
+					se.printStackTrace(System.err);
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (Exception e) {
+					e.printStackTrace(System.err);
+				}
+			}
+		}
+		
+		
+		return tripMemberVO;
+	}
 }

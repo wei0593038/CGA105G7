@@ -57,3 +57,17 @@ $(function(){
 	  timepicker:false
 	 });
 });
+
+function addTripForm(event) {
+  if (!$('#cover-pic').val()) {
+    swal ( "Oops" ,  "請選擇封面圖片!!" ,  "error" )
+    event.preventDefault();
+  }
+}
+
+function updateTripPicForm(event) {
+  if (!$('#updatePic').val()) {
+    swal ( "Oops" ,  "請選擇封面圖片!!" ,  "error" )
+    event.preventDefault();
+  }
+}

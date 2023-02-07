@@ -20,8 +20,8 @@
 							<label for="aloc_name" class="col-4">景點名稱 : </label>
 							<input type="text" name="loc_name" maxlength="15" id="aloc_name" class="col-6" placeholder="必填" required>
 					</div>
-							<input type="hidden" id="addLocalongitude"><!-- 經度 : -->
-							<input type="hidden" id="addLocalatitude"><!-- 緯度 : -->
+							<input type="hidden" id="addLocalongitude" name="longitude"><!-- 經度 : -->
+							<input type="hidden" id="addLocalatitude" name="latitude"><!-- 緯度 : -->
 					<div class="row m-2">
 							<label for="addAddress" class="col-4">地址 : </label>
 							<input type="text" name="address" id="addAddress" maxlength="30" class="col-6" placeholder="必填" required>

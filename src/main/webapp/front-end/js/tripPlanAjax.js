@@ -79,11 +79,11 @@ function getOneLocAjax(locId){
                         <div class="modal-body">
                           <div class="text-center m-2">
                             <label for="">預計到達時間 : </label>
-                            <input type="text" name="arrivalTime" id="arrivalTime" onkeypress="$(this).val('')">
+                            <input type="text" name="arrivalTime" id="arrivalTime" required onkeypress="$(this).val('')">
                           </div>
                           <div class="text-center m-2">
                             <label for="">預計離開時間 : </label>
-                            <input type="text" name="leaveTime" id="leaveTime" onkeypress="$(this).val('')">
+                            <input type="text" name="leaveTime" id="leaveTime" required onkeypress="$(this).val('')">
                           </div>
                           <div class="text-center m-2">
                             <label for="">預計停留時間 : </label>
