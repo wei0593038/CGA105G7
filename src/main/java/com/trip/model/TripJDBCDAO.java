@@ -15,7 +15,7 @@ public class TripJDBCDAO implements TripDAO_interface{
 	String driver = "com.mysql.cj.jdbc.Driver";
 	String url = "jdbc:mysql://localhost:3306/test01?serverTimezone=Asia/Taipei";
 	String userid = "root";
-	String passwd = "King297145";
+	String passwd = "02021";
 	
 	private static final String INSERT_STMT = 
 			"INSERT INTO trip (TRIP_NAME,START_DATE,END_DATE,COVER_PIC,NOTE) VALUES (?,?,?,?,?)";

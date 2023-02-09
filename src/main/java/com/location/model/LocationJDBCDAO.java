@@ -20,7 +20,7 @@ public class LocationJDBCDAO implements LocationDAO_interface {
 	String driver = "com.mysql.cj.jdbc.Driver";
 	String url = "jdbc:mysql://localhost:3306/test01?serverTimezone=Asia/Taipei";
 	String userid = "root";
-	String passwd = "King297145";
+	String passwd = "02021";
 
 	private static final String INSERT_STMT = "INSERT INTO location (USER_ID,LOC_NAME,LONGITUDE,LATITUDE,LOC_ADDRESS,LOC_PHONE,LOC_STATUS) VALUES (?,?,?,?,?,?,?)";
 	private static final String UPDATE = "UPDATE location set USER_ID=?, LOC_NAME=?, LONGITUDE=?, LATITUDE=?, LOC_ADDRESS=?,LOC_PHONE=?,LOC_STATUS=? where LOC_ID = ?";

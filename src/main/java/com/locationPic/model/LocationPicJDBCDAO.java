@@ -20,7 +20,7 @@ public class LocationPicJDBCDAO implements LocationPicDAO_interface{
 	String driver = "com.mysql.cj.jdbc.Driver";
 	String url = "jdbc:mysql://localhost:3306/test01?serverTimezone=Asia/Taipei";
 	String userid = "root";
-	String passwd = "King297145";
+	String passwd = "02021";
 	
 	private static final String INSERT_STMT = 
 			"INSERT INTO location_pic (LOC_ID,LOC_PIC) VALUES (?,?)";

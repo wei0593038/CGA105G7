@@ -127,7 +127,7 @@ public class TripServlet extends HttpServlet{
 				String jsonStr = "";
 				jsonStr = gson.toJson(tripVO);
 				PrintWriter out = res.getWriter();
-				out.print(jsonStr);;
+				out.print(jsonStr);
 				out.close();
 			}else {
 				String url = "/front-end/TripPlan/tripPlan.jsp";

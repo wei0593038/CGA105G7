@@ -10,20 +10,19 @@
 <%
 	Integer userId = null;
 	if(request.getParameter("USER_ID") != null){
-	userId = Integer.valueOf(request.getParameter("USER_ID"));//這裡會員資料先寫死
-	System.out.println("Parameter");
+		userId = Integer.valueOf(request.getParameter("USER_ID"));//這裡會員資料先寫死
 	}else{
-		System.out.println("session");
 		userId =  (Integer)session.getAttribute("userId");		
 	}
-	session.setAttribute("userId", userId);		
+	session.setAttribute("userId", userId);
+	//如果沒有userId就等於沒有登入，轉跳到login
+	if(userId == null)
+		request.getRequestDispatcher("/front-end/test.jsp").forward(request, response);
 
 	//搜尋user所有的 trip
 	TripService tripSvc = new TripService();
 	List<TripVO> triplist = tripSvc.getAll(userId);
 	pageContext.setAttribute("triplist", triplist);
-	
-	
 %>
 
 <%@ include file="../headAndFoot/header.jsp" %>

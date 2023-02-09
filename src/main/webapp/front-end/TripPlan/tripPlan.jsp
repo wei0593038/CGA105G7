@@ -21,6 +21,9 @@
 <%
 // 先接userId UsersVO usersVO = (UsersVO) session.getAttribute("usersVO");
 	Integer userId =  (Integer)session.getAttribute("userId");
+	if(userId == null){
+		request.getRequestDispatcher("/front-end/TripAll/userTripAll.jsp").forward(request, response);
+	}
 	
 	Integer tripId = null;
 	if(request.getParameter("TRIP_ID") != null){
@@ -35,7 +38,7 @@
 	TripMemberService tripMemSvc = new TripMemberService();
 	TripMemberVO tripMbrVO = tripMemSvc.checkUserInTrip(tripId, userId);
 	if(tripMbrVO == null){
-		request.getRequestDispatcher("https://tw.yahoo.com/?p=us").forward(request, response);
+		request.getRequestDispatcher("/front-end/TripAll/userTripAll.jsp").forward(request, response);
 	}
 	
 // tripId search tripVO
@@ -277,8 +280,8 @@
         </div>
 
         <div class="p-2 ps-4 border-top border-dark" style="background-color: aliceblue;">
-            <input type="text" id="msg-input" onkeydown="if (event.keyCode == 13) sendMsg(<%=userId%>);">
-            <button type="button" class="btn trip-btn" onclick="sendMsg(<%=userId%>)"><i class="bi bi-send-fill"></i></button>
+            <input type="text" id="msg-input" onkeydown="if (event.keyCode == 13) sendMsg();">
+            <button type="button" class="btn trip-btn" onclick="sendMsg()"><i class="bi bi-send-fill"></i></button>
         </div>
       </div>
       <!-- mbr group msg end -->

@@ -1,6 +1,6 @@
 
 //Websocket
-	var MyPoint = "/tripChat.do";
+	var MyPoint = `/tripChat.do/${tripId}`;
 	var host = window.location.host;
 	var wsPath = window.location.pathname;
 	var webCtx = wsPath.substring(0, wsPath.indexOf('/', 1));
@@ -22,33 +22,23 @@ function connect() {
 		};
 
 		webSocket.onmessage = function(msg) {
-		var jsonObj = JSON.parse(msg.data);
-		let htmlStr = "";
-		if(jsonObj.UserId === userId){
-		htmlStr = `
-		<div class="m-2 text-end d-flex flex-row-reverse">
-            <span class="trip-msg">${jsonObj.Msg}</span>
-            <p class="fs-6 mb-0 mt-auto">${jsonObj.SendTime[3]}:${jsonObj.SendTime[4]}</p> 
-         </div>`;			
-		}else{
-		htmlStr = `
-		<div class="m-2 text-end d-flex">
-			<div>${userId}</div>
-            <span class="trip-msg">${jsonObj.Msg}</span>
-            <p class="fs-6 mb-0 mt-auto">${jsonObj.SendTime[3]}:${jsonObj.SendTime[4]}</p> 
-         </div>`;
+		let jsonStr = JSON.parse(msg.data);
+			if(jsonStr.length === undefined){
+				updateDialog(jsonStr)
+			}
+		
+			for(let count =0; count<jsonStr.length; count++){
+				let jsonObj = JSON.parse(jsonStr[count]);
+				updateDialog(jsonObj);
+			};
 		}
-          
-   	$('#msg-content').append(htmlStr);
-		};
-
 		webSocket.onclose = function(event) {
 			console.log("Disconnected!");
 		};
 	}
 
 //送出訊息
-function sendMsg(userId){
+function sendMsg(){
 	console.log("you is send message ? " + userId);
 	let msg = $('#msg-input');
 	console.log("YOUR MSG" + msg.val());
@@ -60,14 +50,43 @@ function sendMsg(userId){
 	let min = currentTime.getMinutes();
 	let sec = currentTime.getSeconds();
 	let jsonObj = {
-		UserId : userId,
-		Msg : msg.val(),
-		SendTime :[year, mon, date, hour, min, sec]
+		userId: userId,
+		tripId: tripId,
+		message: msg.val(),
+		sendTime:[year, mon, date, hour, min, sec]
 	};
 	
 	console.log(jsonObj);
 	webSocket.send(JSON.stringify(jsonObj));
 	msg.val("");
 	msg.focus();
+}
+
+let date=0;
+function updateDialog(json){
+	let msgContent = $('#msg-content');
+	let htmlStr = "";
+	if(date < json.sendTime[2]){
+		 date = json.sendTime[2];
+		 let dateHtml = `<div class="text-center"><p class="d-inline p-2 bg-cblue" style="border-radius: 30px;">${json.sendTime[1]}/${date}日</p></div>`;
+		 msgContent.append(dateHtml);
+	}
+	if(json.userId === userId){
+		htmlStr = `
+		<div class="m-2 text-end d-flex flex-row-reverse">
+            <span class="trip-msg text-start">${json.message}</span>
+            <p class="fs-6 mb-0 mt-auto">${json.sendTime[3]}:${json.sendTime[4]}</p> 
+         </div>`;			
+		}else{
+		htmlStr = `
+		<div class="m-2 text-end d-flex">
+			<div>${json.userId}</div>
+            <span class="trip-msg">${json.message}</span>
+            <p class="fs-6 mb-0 mt-auto">${json.sendTime[3]}:${json.sendTime[4]}</p> 
+         </div>`;
+		}
+   	msgContent.append(htmlStr);
+   	let scrollHeight = $('#msg-content').prop("scrollHeight");
+   	msgContent.scrollTop(scrollHeight,200);
 }
           
